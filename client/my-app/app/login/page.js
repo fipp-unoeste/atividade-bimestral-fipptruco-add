@@ -6,18 +6,40 @@ export default function Login() {
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const usuario = { email, senha };
-        console.log('Login efetuado com:', usuario);
-        setEmail('');
-        setSenha('');
+    const BuscarUsuario = async (usuario) => {
+        try {
+            const response = await fetch('http://localhost:5000/usuarios/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(usuario),
+            });
+    
+            const data = await response.json(); 
+    
+            if (!response.ok) {
+                throw new Error(data.msg || 'Erro ao fazer login de usuário'); 
+            }
+            else{
+
+window.location.href = '/salas';            }
+
+        } catch (error) {
+            console.error('Falha no login do usuário:', error.message);
+        }
+    };
+
+    const handleClick = async () => {
+        const usuario = {email, senha };
+        console.log('Usuário Logado:', usuario);
+        await BuscarUsuario(usuario);
     };
 
     return (
         <div style={styles.container}>
             <h1 style={styles.title}>Login</h1>
-            <form onSubmit={handleSubmit} style={styles.form}>
+            <form style={styles.form}>
                 <div style={styles.formGroup}>
                     <label htmlFor="email" style={styles.label}>Email:</label>
                     <input
@@ -40,7 +62,7 @@ export default function Login() {
                         style={styles.input}
                     />
                 </div>
-                <button type="submit" style={styles.button}>Entrar</button>
+                <button type="button" onClick={handleClick} style={styles.button}>Entrar</button>
             </form>
         </div>
     );

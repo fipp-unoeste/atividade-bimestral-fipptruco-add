@@ -7,7 +7,6 @@ export default function CadastroUsuario() {
     const [senha, setSenha] = useState('');
 
     const AddUsuario = async (usuario) => {
-        console.log('Função AddUsuario chamada');
         try {
             const response = await fetch('http://localhost:5000/usuarios', {
                 method: 'POST',

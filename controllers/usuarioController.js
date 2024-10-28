@@ -5,6 +5,7 @@ import UsuarioEntity from "../entities/usuarioEntity.js";
 export default class UsuarioController {
 
     async gravar(req, res) {
+       
         try {
             const { nome, email, senha } = req.body;
             if (!nome || !email || !senha) {
@@ -25,7 +26,21 @@ export default class UsuarioController {
             return res.status(500).json({ msg: ex.message || "Erro interno do servidor" });
         }
     }
-    
-    
+
+    async buscarUsuario(req, res) {
+         console.log('teste');
+        try{
+            let {email, senha } = req.body;
+            let usuario = new UsuarioRepository();
+            let entidade = await usuario.validarAcesso(email,senha);
+            if(entidade == null){
+                res.status(400).json({msg: 'Usuário não encontrado',ok:false})
+            }
+            res.status(200).json(entidade);
+        }
+        catch(ex) {
+            res.status(500).json({msg: ex.message});
+        }
+    }
     
 }
