@@ -1,5 +1,6 @@
+import BaseEntity from "./baseEntity.js";
 
-export default class UsuarioEntity {
+export default class UsuarioEntity extends BaseEntity{
     
     #id;
     #nome;
@@ -19,6 +20,7 @@ export default class UsuarioEntity {
     set senha(value) {this.#senha = value;}
 
     constructor(id, nome, email, senha) {
+        super();
         this.#id = id;
         this.#nome = nome;
         this.#email = email;
