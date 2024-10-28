@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import { useState } from 'react';
 
 export default function CadastroUsuario() {
@@ -6,10 +6,35 @@ export default function CadastroUsuario() {
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const AddUsuario = async (usuario) => {
+        console.log('Função AddUsuario chamada');
+        try {
+            const response = await fetch('http://localhost:5000/usuarios', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(usuario),
+            });
+    
+            const data = await response.json(); 
+    
+            if (!response.ok) {
+                throw new Error(data.msg || 'Erro ao cadastrar usuário'); 
+            }
+    
+            console.log('Usuário cadastrado com sucesso:', data);
+            return data;
+    
+        } catch (error) {
+            console.error('Falha ao cadastrar usuário:', error.message);
+        }
+    };
+
+    const handleClick = async () => {
         const usuario = { nome, email, senha };
         console.log('Usuário cadastrado:', usuario);
+        await AddUsuario(usuario);
         setNome('');
         setEmail('');
         setSenha('');
@@ -18,7 +43,7 @@ export default function CadastroUsuario() {
     return (
         <div style={styles.container}>
             <h1 style={styles.title}>Faça seu Cadastro e Jogue</h1>
-            <form onSubmit={handleSubmit} style={styles.form}>
+            <form style={styles.form}>
                 <div style={styles.formGroup}>
                     <label htmlFor="nome" style={styles.label}>Nome:</label>
                     <input
@@ -52,7 +77,7 @@ export default function CadastroUsuario() {
                         style={styles.input}
                     />
                 </div>
-                <button type="submit" style={styles.button}>Cadastrar</button>
+                <button type="button" onClick={handleClick} style={styles.button}>Cadastrar</button>
             </form>
         </div>
     );
@@ -99,7 +124,7 @@ const styles = {
         borderRadius: '4px',
         border: '1px solid #c8e6c9',
         outline: 'none',
-        color: '#fff',  
+        color: '#fff',
         backgroundColor: '#3a6351',
     },
     button: {
