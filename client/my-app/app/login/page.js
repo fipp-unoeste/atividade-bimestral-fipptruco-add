@@ -21,9 +21,10 @@ export default function Login() {
             if (!response.ok) {
                 throw new Error(data.msg || 'Erro ao fazer login de usuário'); 
             }
-            else{
-
-window.location.href = '/salas';            }
+            else
+            {
+                window.location.href = '/salas';            
+            }
 
         } catch (error) {
             console.error('Falha no login do usuário:', error.message);

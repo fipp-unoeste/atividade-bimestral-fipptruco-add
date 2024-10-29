@@ -1,8 +1,10 @@
 import express from 'express';
 import UsuarioController from '../controllers/usuarioController.js';
+import AuthMiddleware from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
-const ctrl = new UsuarioController(); 
+const ctrl = new UsuarioController();
+let auth = new AuthMiddleware(); 
 
 router.post("/login", (req, res) => {
     ctrl.buscarUsuario(req, res);
