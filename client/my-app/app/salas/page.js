@@ -1,23 +1,28 @@
 'use client'
 
 import Link from 'next/link';
+import { useEffect, useRef, useState } from 'react';
+import Salas from '../components/salas';
 
 export default function Sala() {
 
-    
     return (
         <div style={styles.container}>
-            <h1 style={styles.title}>Bem-vindo a Sala de Truco Online!</h1>
-            <p style={styles.description}>
+            <h1 style={styles.title}>Salas de Truco</h1>
+            <span>Escolha uma sala e jogue</span>
+
+            <Salas />
+            
+            {/* <p style={styles.description}>
                 Jogue truco com amigos e desafie outros jogadores online! Prepare-se para muita diversão e emoção com o nosso jogo de truco online.
             </p>
             <div style={styles.buttonsContainer}>
                 <Link href="/" style={styles.button}>
                     Jogar
                 </Link>
-            </div>
+            </div> */}
         </div>
-    );
+    )
 }
 
 const styles = {
