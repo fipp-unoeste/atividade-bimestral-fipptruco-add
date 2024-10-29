@@ -3,6 +3,8 @@
 import Link from 'next/link';
 
 export default function Sala() {
+
+    
     return (
         <div style={styles.container}>
             <h1 style={styles.title}>Bem-vindo a Sala de Truco Online!</h1>

@@ -16,9 +16,9 @@ export default function Home() {
                 <Link href="/cadastro" style={styles.button}>
                     Cadastro
                 </Link>
-                <button style={styles.startButton}>
+                <Link href="/salas" style={styles.button}>
                     Começar Partida
-                </button>
+                </Link>
             </div>
         </div>
     );

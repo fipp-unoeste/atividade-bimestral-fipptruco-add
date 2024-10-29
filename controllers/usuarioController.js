@@ -1,6 +1,7 @@
 
 import UsuarioRepository from "../repositories/usuarioRepository.js";
 import UsuarioEntity from "../entities/usuarioEntity.js";
+import AuthMiddleware from "../middlewares/authMiddleware.js";
 
 export default class UsuarioController {
 
@@ -28,19 +29,25 @@ export default class UsuarioController {
     }
 
     async buscarUsuario(req, res) {
-         console.log('teste');
         try{
             let {email, senha } = req.body;
-            let usuario = new UsuarioRepository();
-            let entidade = await usuario.validarAcesso(email,senha);
-            if(entidade == null){
+            let repoUsuario = new UsuarioRepository();
+            let usuario = await repoUsuario.validarAcesso(email,senha);
+            if(usuario == null){
                 res.status(400).json({msg: 'Usuário não encontrado',ok:false})
             }
-            res.status(200).json(entidade);
+
+            let auth = new AuthMiddleware();
+            let token = auth.gerarToken(usuario.id, usuario.email, usuario.senha);
+            console.log("Token:", token);
+            res.cookie("token", token, {
+                httpOnly: true
+            });
+
+            res.status(200).json({token: token});
         }
         catch(ex) {
             res.status(500).json({msg: ex.message});
         }
     }
-    
 }
