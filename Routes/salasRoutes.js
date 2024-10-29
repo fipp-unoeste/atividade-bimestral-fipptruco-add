@@ -11,4 +11,12 @@ router.get("/", auth.validar, (req, res) => {
     ctrl.listar(req, res);
 });
 
+router.post("/", auth.validar ,(req, res) => {
+    ctrl.criar(req, res);
+});
+
+router.put("/:id", auth.validar, (req, res) => {
+    ctrl.atualizar(req, res);
+});
+
 export default router;
