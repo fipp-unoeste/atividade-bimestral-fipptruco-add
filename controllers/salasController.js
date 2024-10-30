@@ -1,6 +1,7 @@
 import SalaEntity from "../entities/salaEntity.js";
 import SalaRepository from "../repositories/salaRepository.js";
 
+
 export default class SalasController {
 
     async listar(req, res) {
@@ -47,32 +48,22 @@ export default class SalasController {
         }
     }
 
-    async atualizar(req, res) {
-        try{
-            let {sal_id, nome } = req.body;
-            if(sal_id && nome ) {
-                
-                let repo = new SalaRepository();
-                if(await repo.obter(sal_id)) {
-                    let entidade = new SalaEntity(sal_id, nome);
+    adicionar(req, res) {
+        if(usuarios.findIndex(x=> x.nome == req.body.nome && x.sala == req.body.sala) == -1)
+            usuarios.push({nome: req.body.nome, sala: req.body.sala})
 
-                    let result = await repo.atualizar(entidade);
+        let qtde = usuarios.length;
 
-                    if(result)
-                        res.status(200).json({msg: "Nome da Sala atualizado com sucesso!"});
-                    else
-                        throw new Error("Erro ao atualizar nome da sala no banco de dados");
-                }
-                else{
-                    res.status(404).json({msg: "Nenhuma sala encontrada para alteração!"});
-                }
-            }
-            else{
-                res.status(400).json({msg: "Parâmetros inválidos"});
-            }
-        }
-        catch(ex) {
-            res.status(500).json({msg: ex.message});
-        }
+        res.status(200).json({qtde: qtde});
+    }
+
+
+    validarSala(req, res) {
+        let cheia = usuarios.filter(x=>  x.sala == req.body.sala).length >= 4;
+        res.status(200).json({cheia: cheia});
+    }
+
+    remover(nome, sala) {
+        usuarios = usuarios.filter(x=> x.nome != nome && x.sala != sala);
     }
 }

@@ -1,13 +1,12 @@
 
-
-export default function ItemSala({ objSala, entrar, atualizar }) {
+export default function ItemSala({ objSala, entrar }) {
 
     return (
         <table>
             <thead>
                 <tr style={{marginBottom: '10px'}}>
                 <th>Nome</th>
-                <th>Editar</th>
+                <th>Lotação</th> 
                 <th>Entrar</th>
                 </tr>
             </thead>
@@ -17,7 +16,7 @@ export default function ItemSala({ objSala, entrar, atualizar }) {
                         <span style={{marginRight: '25px'}}>{objSala.nome}</span>
                     </td>
                     <td>
-                        <button onClick={() => atualizar(objSala.sal_id)}>Editar</button>
+                        <span style={{marginRight: '25px'}}>2</span>
                     </td>
                     <td>
                         <button onClick={() => entrar(objSala.sal_id)}>Entrar</button>
