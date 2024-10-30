@@ -87,14 +87,12 @@ export default function Salas() {
                     <th colSpan="6" style={{ padding: '10px' }}>
                         <label>Nome da Sala:</label>
                         <input ref={sala} type="text" placeholder="Nome da Sala" style={{ margin: '0 10px', color: "black" }} />
-                        <button onClick={idAlteracao === 0 ? criarSala : confirmarAtualizacao}>
-                            {idAlteracao === 0 ? 'Criar' : 'Alterar'}
-                        </button>
+                        <button onClick={criarSala}>Criar</button>
                     </th>
                 </tr>
                 <tr style={{ backgroundColor: '#4CAF50', borderBottom: '2px solid #ccc' }}>
                     <th style={{ textAlign: 'left' }}>Nome</th>
-                    <th style={{ textAlign: 'left' }}>Editar</th>
+                    <th style={{ textAlign: 'left' }}>Lotação</th>
                     <th style={{ textAlign: 'left' }}>Entrar</th>
                 </tr>
             </thead>
@@ -102,9 +100,7 @@ export default function Salas() {
                 {lista.map((value) => (
                     <tr key={value.sal_id} style={{ borderBottom: '1px solid #ccc' }}>
                         <td style={{ padding: '8px' }}>{value.nome}</td>
-                        <td style={{ padding: '8px' }}>
-                            <button onClick={() => iniciarAtualizacao(value.sal_id)}>Editar</button>
-                        </td>
+                        <td style={{ padding: '8px' }}>2</td>
                         <td style={{ padding: '8px' }}>
                             <button onClick={() => entrar(value.sal_id)}>Entrar</button>
                         </td>

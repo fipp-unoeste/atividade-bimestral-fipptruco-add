@@ -8,8 +8,8 @@ export default function Sala() {
 
     return (
         <div style={styles.container}>
-            <h1 style={styles.title}>Salas de Truco</h1>
-            <span>Escolha uma sala e jogue</span>
+            <h1 style={styles.title}>Salas de Truco Disponiveis</h1>
+            <span>Escolha uma sala ou crie e jogue</span>
 
             <Salas />
             
