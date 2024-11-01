@@ -6,27 +6,19 @@ const SEGREDO = "chave_secreta";
 
 export default class AuthMiddleware {
 
-    gerarToken(id, email, senha) {
-        return jwt.sign({
-            id,
-            email,
-            senha,
-        }, SEGREDO, { expiresIn: '1h' }); 
-    }
+    gerarToken(id, email) {
+        return jwt.sign({ id, email }, SEGREDO, { expiresIn: '1h' });
+      }
 
     async validar(req, res, next) {
-        let {token} = req.cookies;
+        const token = req.headers.authorization && req.headers.authorization.split(' ')[1]; 
+        console.log("3 - Token:", token);
         if(token){
             try {
                 let objUsuario = jwt.verify(token, SEGREDO);
                 let repo = new UsuarioRepository();
                 let usuario = await repo.obter(objUsuario.id);
                 if(usuario) {
-                    let auth = new AuthMiddleware();
-                    let tokenNovo = auth.gerarToken(objUsuario.id, objUsuario.email, objUsuario.senha)
-                    res.cookie("token", tokenNovo, {
-                        httpOnly:true
-                    })
                     req.usuarioLogado = usuario;
                     next();
                 }
