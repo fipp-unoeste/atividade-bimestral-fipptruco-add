@@ -25,7 +25,7 @@ export default class SalaRepository extends BaseRepository {
 
         return result;
     }
-
+    
     async atualizar(entidade) {
 
         let sql = `update tb_sala set sal_nome = ?
@@ -40,11 +40,14 @@ export default class SalaRepository extends BaseRepository {
     toMap(rows) {
         if (!rows) return null;
     
-        const sala = new SalaEntity();
-        sala.sal_id = rows["sal_id"];
-        sala.nome = rows["sal_nome"];
-        sala.id = rows["usu_id"];
-        
-        return Array.isArray(rows) ? sala : [sala];
+        return Array.isArray(rows) 
+        ? rows.map(row => {
+            const sala = new SalaEntity();
+            sala.sal_id = row.sal_id;
+            sala.nome = row.sal_nome;
+            sala.usu_id = row.usu_id;
+            return sala;
+        }) 
+        : null;
     }
 }

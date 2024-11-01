@@ -23,7 +23,7 @@ export default class UsuarioController {
                 throw new Error("Erro ao cadastrar usuário no banco de dados");
             }
         } catch (ex) {
-            console.error("Erro no cadastro:", ex); // Log do erro
+            console.error("Erro no cadastro:", ex); 
             return res.status(500).json({ msg: ex.message || "Erro interno do servidor" });
         }
     }
@@ -38,15 +38,17 @@ export default class UsuarioController {
             }
 
             let auth = new AuthMiddleware();
-            let token = auth.gerarToken(usuario.id, usuario.email, usuario.senha);
-            console.log("Token:", token);
-            res.cookie("token", token, {
-                httpOnly: true
-            });
+            let token = auth.gerarToken(usuario.id, usuario.email);
 
-            res.status(200).json({token: token});
+            console.log("1 - Token:", token);
+            res.cookie("token", token);
+
+            console.log("2 - Token:", token);
+
+            res.status(200).json({token});
         }
         catch(ex) {
+            console.error("Erro no login:", ex); 
             res.status(500).json({msg: ex.message});
         }
     }

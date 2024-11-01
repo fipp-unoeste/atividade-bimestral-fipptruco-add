@@ -11,10 +11,10 @@ export default class UsuarioRepository extends BaseRepository {
 
         let sql = "select * from tb_usuario where usu_email = ? and usu_senha = ?";
         let valores = [email, senha];
-
         let row = await this.db.ExecutaComando(sql, valores);
+        let usuario = this.toMap(row[0]);
 
-        return this.toMap(row[0]);
+        return usuario;
     }
 
     async obter(id) {
@@ -22,7 +22,6 @@ export default class UsuarioRepository extends BaseRepository {
         let valores = [id];
 
         let row = await this.db.ExecutaComando(sql, valores);
-
         return this.toMap(row[0]);
     }
 
@@ -45,8 +44,8 @@ export default class UsuarioRepository extends BaseRepository {
         usuario.nome = rows["usu_nome"];
         usuario.email = rows["usu_email"];
         usuario.senha = rows["usu_senha"];
-        
-        return Array.isArray(rows) ? usuario : [usuario];
+        let retorno = Array.isArray(rows) == false ? usuario : [usuario];
+        console.log('retorno:', retorno);
+        return retorno;
     }
-    
 }

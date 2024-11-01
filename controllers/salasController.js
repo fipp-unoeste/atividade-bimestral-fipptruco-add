@@ -30,7 +30,7 @@ export default class SalasController {
                 if(result) {
                     res.status(201).json({msg: "Sala criada!"});
                 }
-                else {            
+                else {       
                     throw new Error("Erro ao criar sala no banco de dados");
                 }
             }
@@ -39,7 +39,7 @@ export default class SalasController {
             }
         }
         catch(ex) {
-            if(ex.insertImovel) {
+            if(ex.insertSala) {
                 res.status(200).json({msg: ex.message});
             }
             else{
@@ -49,12 +49,13 @@ export default class SalasController {
     }
 
     adicionar(req, res) {
-        if(usuarios.findIndex(x=> x.nome == req.body.nome && x.sala == req.body.sala) == -1)
-            usuarios.push({nome: req.body.nome, sala: req.body.sala})
+        // if(usuarios.findIndex(x=> x.nome == req.body.nome && x.sala == req.body.sala) == -1)
+        //     usuarios.push({nome: req.body.nome, sala: req.body.sala})
 
-        let qtde = usuarios.length;
+        // let qtde = usuarios.length;
 
-        res.status(200).json({qtde: qtde});
+         res.status(200).json({quantidade: 98});
+        //  res.status(200).json({qtde: qtde});
     }
 
 
@@ -64,6 +65,6 @@ export default class SalasController {
     }
 
     remover(nome, sala) {
-        usuarios = usuarios.filter(x=> x.nome != nome && x.sala != sala);
+        // usuarios = usuarios.filter(x=> x.nome != nome && x.sala != sala);
     }
 }
