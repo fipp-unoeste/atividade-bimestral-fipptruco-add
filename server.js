@@ -8,7 +8,9 @@ import cookieParser from 'cookie-parser';
 
 import routerUsuarios from './Routes/usuarioRoute.js';
 import routerSalas from './Routes/salasRoutes.js';
+import routerBaralho from './Routes/baralhoRoutes.js'
 import socketInit from './sockets/trucoSocket.js';
+import router from './Routes/usuarioRoute.js';
 
 //import { createRequire } from "module";
 //const require = createRequire(import.meta.url);
@@ -36,6 +38,7 @@ app.use(express.static(__dirname + '/public'));
 
 app.use("/usuarios", routerUsuarios);
 app.use("/salas", routerSalas);
+app.use("/baralho", routerBaralho);
 
 server.listen(5000, () => {
   console.log("BackEnd - Servidor web em funcionamento na porta 5000!");

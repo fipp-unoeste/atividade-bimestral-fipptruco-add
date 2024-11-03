@@ -38,7 +38,7 @@ export default class UsuarioController {
             }
 
             let auth = new AuthMiddleware();
-            let token = auth.gerarToken(usuario.id, usuario.email);
+            let token = auth.gerarToken(usuario.id, usuario.email, usuario.nome);
 
             console.log("1 - Token:", token);
             res.cookie("token", token);

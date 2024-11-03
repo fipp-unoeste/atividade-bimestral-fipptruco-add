@@ -7,7 +7,7 @@ const SEGREDO = "chave_secreta";
 export default class AuthMiddleware {
 
     gerarToken(id, email) {
-        return jwt.sign({ id, email }, SEGREDO, { expiresIn: '1h' });
+        return jwt.sign({ id, email, nome }, SEGREDO, { expiresIn: '1h' });
       }
 
     async validar(req, res, next) {
