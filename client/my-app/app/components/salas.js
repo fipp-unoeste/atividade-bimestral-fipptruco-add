@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
 import { io } from 'socket.io-client';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Salas() {
 
@@ -10,16 +11,20 @@ export default function Salas() {
     const URL = 'http://localhost:5000';
     const URLFront = 'http://localhost:3000';
     const [lista, setLista] = useState([]);
-    const [idAlteracao, setAlteracao] = useState(0);
     const sala = useRef('');
+    const { token } = useAuth();
 
     useEffect(() => {
-        listarSalas();
-    }, []);
+        if (token) {
+            console.log("Token disponível no contexto:", token);
+            listarSalas();
+        }
+    }, [token]);
     
     async function listarSalas() {
+
         try {
-            const token = getCookie('token'); 
+            console.log("Listando salas com token:", token);
 
             const response = await fetch(URL + '/salas', {
                 method: 'GET',
@@ -29,15 +34,15 @@ export default function Salas() {
                 });
             const data = await response.json();
             setLista(Array.isArray(data) ? data : []);
+            console.log("Salas recebidas do servidor:", data);
+
         } catch (error) {
             console.error("Erro ao listar salas:", error);
             setLista([]); 
         }
     }
     
-
     async function criarSala() {
-        const token = getCookie('token'); 
         const nomeSala = sala.current.value.trim();
         if (nomeSala) {
             try {
@@ -73,43 +78,16 @@ export default function Salas() {
         if (parts.length === 2) return parts.pop().split(';').shift();
     }
 
-    async function confirmarAtualizacao() {
-        try {
-            const response = await fetch(URL + '/salas', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ sal_id: idAlteracao, nome: sala.current.value })
-            });
-            if (response.ok) {
-                alert("Sala atualizada com sucesso!");
-                listarSalas();
-                setAlteracao(0);
-                sala.current.value = "";
-            } else {
-                alert("Erro ao atualizar sala!");
-            }
-        } catch (error) {
-            console.error("Erro ao atualizar sala:", error);
-        }
-    }
-
     function entrar(sal_id) {
-        const token = getCookie('token'); 
     
         if (token) {
+            console.log("Entrando na sala:", sal_id, "com token:", token);
             router.push(URLFront + "/salas/" + sal_id);
         } else {
+            console.warn("Tentativa de entrar em uma sala sem token. Redirecionando para login.");
             alert("Você precisa estar logado para entrar em uma sala.");
             router.push('/login'); 
         }
-    }
-
-    function iniciarAtualizacao(sal_id) {
-        const registroAlteracao = lista.find(x => x.sal_id === sal_id);
-        sala.current.value = registroAlteracao.nome;
-        setAlteracao(sal_id);
     }
 
     return (

@@ -1,10 +1,21 @@
 'use client'
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Login() {
+    const { login } = useAuth();
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
+    const router = useRouter();
+
+    useEffect(() => {
+        const token = document.cookie.split('; ').find(row => row.startsWith('token='));
+        if (token) {
+            router.push('/salas');
+        }
+    }, [router]);
 
     const BuscarUsuario = async (usuario) => {
         try {
@@ -16,32 +27,38 @@ export default function Login() {
                 },
                 body: JSON.stringify(usuario),
             });
-    
-            const data = await response.json(); 
-    
+
+            const data = await response.json();
+            console.log("Dados recebidos:", data);
+
             if (!response.ok) {
-                throw new Error(data.msg || 'Erro ao fazer login de usuário'); 
+                throw new Error(data.msg || 'Erro ao fazer login de usuário');
             }
-            else
-            {
-                window.location.href = '/salas';            
+
+            if (data && data.token) {
+                login(data.token);
+                router.push('/salas');
+            } else {
+                console.error("Token não encontrado na resposta:", data);
+                alert('Erro ao autenticar o usuário.');
             }
 
         } catch (error) {
             console.error('Falha no login do usuário:', error.message);
+            alert('Usuário não encontrado ou dados incorretos');
         }
     };
 
     const handleClick = async () => {
-        const usuario = {email, senha };
-        console.log('Usuário Logado:', usuario);
+        const usuario = { email, senha };
+        console.log('Tentativa de login com:', usuario);
         await BuscarUsuario(usuario);
     };
 
     return (
         <div style={styles.container}>
             <h1 style={styles.title}>Login</h1>
-            <form style={styles.form}>
+            <form style={styles.form} onSubmit={(e) => e.preventDefault()}>
                 <div style={styles.formGroup}>
                     <label htmlFor="email" style={styles.label}>Email:</label>
                     <input
@@ -77,18 +94,18 @@ const styles = {
         alignItems: 'center',
         justifyContent: 'center',
         height: '100vh',
-        backgroundColor: '#1b4d3e', 
+        backgroundColor: '#1b4d3e',
         color: '#fff',
         fontFamily: 'Arial, sans-serif',
     },
     title: {
         fontSize: '2rem',
         marginBottom: '20px',
-        color: '#ffdf00', 
+        color: '#ffdf00',
         textShadow: '1px 1px 2px #000',
     },
     form: {
-        backgroundColor: '#2c6e49', 
+        backgroundColor: '#2c6e49',
         padding: '20px 30px',
         borderRadius: '8px',
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
@@ -102,7 +119,7 @@ const styles = {
         display: 'block',
         marginBottom: '5px',
         fontSize: '1rem',
-        color: '#e0f2e9', 
+        color: '#e0f2e9',
     },
     input: {
         width: '100%',
@@ -111,14 +128,14 @@ const styles = {
         borderRadius: '4px',
         border: '1px solid #c8e6c9',
         outline: 'none',
-        color: '#fff', 
-        backgroundColor: '#3a6351', 
+        color: '#fff',
+        backgroundColor: '#3a6351',
     },
     button: {
         width: '100%',
         padding: '10px',
         fontSize: '1rem',
-        backgroundColor: '#ff8c00', 
+        backgroundColor: '#ff8c00',
         color: '#fff',
         border: 'none',
         borderRadius: '4px',

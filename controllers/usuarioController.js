@@ -30,6 +30,8 @@ export default class UsuarioController {
 
     async buscarUsuario(req, res) {
         try{
+            console.log('entrou na controller buscarUsuario');
+            
             let {email, senha } = req.body;
             let repoUsuario = new UsuarioRepository();
             let usuario = await repoUsuario.validarAcesso(email,senha);
