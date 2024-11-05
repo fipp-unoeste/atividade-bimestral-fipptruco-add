@@ -73,28 +73,6 @@ export default function Salas() {
         if (parts.length === 2) return parts.pop().split(';').shift();
     }
 
-    async function confirmarAtualizacao() {
-        try {
-            const response = await fetch(URL + '/salas', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ sal_id: idAlteracao, nome: sala.current.value })
-            });
-            if (response.ok) {
-                alert("Sala atualizada com sucesso!");
-                listarSalas();
-                setAlteracao(0);
-                sala.current.value = "";
-            } else {
-                alert("Erro ao atualizar sala!");
-            }
-        } catch (error) {
-            console.error("Erro ao atualizar sala:", error);
-        }
-    }
-
     function entrar(sal_id) {
         const token = getCookie('token'); 
     
@@ -104,12 +82,6 @@ export default function Salas() {
             alert("Você precisa estar logado para entrar em uma sala.");
             router.push('/login'); 
         }
-    }
-
-    function iniciarAtualizacao(sal_id) {
-        const registroAlteracao = lista.find(x => x.sal_id === sal_id);
-        sala.current.value = registroAlteracao.nome;
-        setAlteracao(sal_id);
     }
 
     return (

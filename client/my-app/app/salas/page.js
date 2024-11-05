@@ -32,7 +32,7 @@ const styles = {
         alignItems: 'center',
         justifyContent: 'center',
         height: '100vh',
-        backgroundColor: '#1b4d3e', 
+        backgroundColor: '#004d00', 
         color: '#fff',
         fontFamily: 'Arial, sans-serif',
         textAlign: 'center',

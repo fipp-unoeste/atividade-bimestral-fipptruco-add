@@ -2,7 +2,6 @@ import { Server } from 'socket.io'
 import SalasContoller from '../controllers/salasController.js';
 
 export default function socket(io) {
-  console.log('entrou no socket');
 
     let salasController = new SalasContoller();
     io.on('connection', (socket) => {

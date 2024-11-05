@@ -14,4 +14,9 @@ router.post("/", (req, res) => {
     ctrl.gravar(req, res);
 });
 
+router.get('/info', auth.validar, (req,res) => {
+    ctrl.info(req,res);
+});
+
+
 export default router;

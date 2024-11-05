@@ -38,7 +38,7 @@ export default class UsuarioController {
             }
 
             let auth = new AuthMiddleware();
-            let token = auth.gerarToken(usuario.id, usuario.email, usuario.nome);
+            let token = auth.gerarToken(usuario.id, usuario.email);
 
             console.log("1 - Token:", token);
             res.cookie("token", token);
@@ -52,4 +52,25 @@ export default class UsuarioController {
             res.status(500).json({msg: ex.message});
         }
     }
+
+    // No seu UsuarioController.js
+
+    async info(req, res) {
+        try {
+            console.log('entrou no info da controller')
+            const usuario = req.usuarioLogado;
+            
+            if (!usuario) {
+                return res.status(404).json({ msg: "Usuário não encontrado!" });
+            }
+
+            res.status(200).json({
+                nome: usuario.nome
+            });
+        } catch (ex) {
+            console.error("Erro ao obter informações do usuário:", ex);
+            res.status(500).json({ msg: ex.message || "Erro interno do servidor" });
+        }
+    }
+
 }
