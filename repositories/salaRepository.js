@@ -52,6 +52,47 @@ export default class SalaRepository extends BaseRepository {
         }
     }
 
+    async listarParticipantes(salaId) {
+        try {
+            const query = `SELECT * FROM tb_participante WHERE sal_id = ?`;
+            const [result] = await db.execute(query, [salaId]); 
+            return result;
+        } catch (error) {
+            throw new Error("Erro ao listar os participantes: " + error.message);
+        }
+    }
+
+    // Adicionar um participante à sala
+    async adicionarParticipante(salaId, nome) {
+        try {
+            const query = `INSERT INTO tb_participante (sal_id, nome) VALUES (?, ?)`;
+            const [result] = await db.execute(query, [salaId, nome]);
+            
+            if (result.affectedRows > 0) {
+                return true;
+            } else {
+                throw new Error("Falha ao adicionar participante.");
+            }
+        } catch (error) {
+            throw new Error("Erro ao adicionar participante: " + error.message);
+        }
+    }
+
+    async removerParticipante(salaId, nome) {
+        try {
+            const query = `DELETE FROM tb_participante WHERE sal_id = ?`;
+            const [result] = await db.execute(query, [salaId, nome]);
+            
+            if (result.affectedRows > 0) {
+                return true; 
+            } else {
+                throw new Error("Falha ao remover participante.");
+            }
+        } catch (error) {
+            throw new Error("Erro ao remover participante: " + error.message);
+        }
+    }
+
     toMap(rows) {
         if (!rows) return null;
     

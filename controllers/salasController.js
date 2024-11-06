@@ -48,23 +48,88 @@ export default class SalasController {
         }
     }
 
-    adicionar(req, res) {
+    async adicionar(req, res) {
+
+        try {
+            let { nome, salaId } = req.body;
+
+            if (!nome || !salaId) {
+                return res.status(400).json({ msg: "Parâmetros inválidos!" });
+            }
+
+    
+            let repo = new SalaRepository();
+            let sala = await repo.buscarPorId(salaId); 
+            if (!sala) {
+                return res.status(404).json({ msg: "Sala não encontrada!" });
+            }
+
+            // Verifica a quantidade de participantes
+            let participantes = await repo.listarParticipantes(salaId); 
+            if (participantes.length >= 4) {
+                return res.status(400).json({ msg: "Sala cheia!" });
+            }
+
+            // Adicionar o jogador à sala
+            let result = await repo.adicionarParticipante(salaId, nome); 
+            if (result) {
+                res.status(200).json({ msg: `Jogador ${nome} entrou na sala com sucesso!` });
+            } else {
+                res.status(500).json({ msg: "Erro ao adicionar jogador na sala!" });
+            }
+        }
+        catch (ex) {
+            res.status(500).json({ msg: ex.message });
+        }
+
         // if(usuarios.findIndex(x=> x.nome == req.body.nome && x.sala == req.body.sala) == -1)
         //     usuarios.push({nome: req.body.nome, sala: req.body.sala})
-
         // let qtde = usuarios.length;
-
-         res.status(200).json({quantidade: 98});
         //  res.status(200).json({qtde: qtde});
     }
 
 
-    validarSala(req, res) {
-        let cheia = usuarios.filter(x=>  x.sala == req.body.sala).length >= 4;
-        res.status(200).json({cheia: cheia});
+    async validarSala(req, res) {
+        // let cheia = usuarios.filter(x=>  x.sala == req.body.sala).length >= 4;
+        // res.status(200).json({cheia: cheia});
+
+        try {
+            let { salaId } = req.body;
+            if (!salaId) {
+                return res.status(400).json({ msg: "Parâmetros inválidos!" });
+            }
+
+            let repo = new SalaRepository();
+            let participantes = await repo.listarParticipantes(salaId);
+
+            // Verifica se a sala está cheia
+            let cheia = participantes.length >= 4;
+            res.status(200).json({ cheia: cheia });
+        } catch (ex) {
+            res.status(500).json({ msg: ex.message });
+        }
     }
 
-    remover(nome, sala) {
+    async remover(nome, sala) {
         // usuarios = usuarios.filter(x=> x.nome != nome && x.sala != sala);
+        try {
+            let { nome, salaId } = req.body;
+
+            if (!nome || !salaId) {
+                return res.status(400).json({ msg: "Parâmetros inválidos!" });
+            }
+
+            let repo = new SalaRepository();
+            let result = await repo.removerParticipante(salaId, nome); // Método para remover jogador
+            if (result) {
+                res.status(200).json({ msg: `Jogador ${nome} removido da sala com sucesso!` });
+            } else {
+                res.status(500).json({ msg: "Erro ao remover jogador da sala!" });
+            }
+        }
+        catch (ex) {
+            res.status(500).json({ msg: ex.message });
+        }
     }
+    
 }
