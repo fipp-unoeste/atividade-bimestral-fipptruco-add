@@ -37,6 +37,21 @@ export default class SalaRepository extends BaseRepository {
         return result;
     }
 
+    async buscarPorId(sal_id) {
+        const query = `
+            SELECT * FROM tb_sala
+            WHERE sal_id = ?
+        `;
+
+        try {
+            const [rows] = await db.execute(query, [sal_id]);
+            return rows.length > 0; 
+        } catch (error) {
+            console.error("Erro ao buscar sala por ID:", error);
+            throw error;
+        }
+    }
+
     toMap(rows) {
         if (!rows) return null;
     

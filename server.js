@@ -5,11 +5,13 @@ import http from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import socketInit from './sockets/trucoSocket.js';
 
 import routerUsuarios from './Routes/usuarioRoute.js';
 import routerSalas from './Routes/salasRoutes.js';
 import routerBaralho from './Routes/baralhoRoutes.js'
-import socketInit from './sockets/trucoSocket.js';
+import participanteRoutes from './Routes/participanteRoutes.js';
+import equipeRoutes from './Routes/equipeRoutes.js';
 
 //import { createRequire } from "module";
 //const require = createRequire(import.meta.url);
@@ -88,6 +90,8 @@ app.use(express.static(__dirname + '/public'));
 app.use("/usuarios", routerUsuarios);
 app.use("/salas", routerSalas);
 app.use("/baralho", routerBaralho);
+app.use('/participantes', participanteRoutes);
+app.use('/equipe', equipeRoutes);
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {

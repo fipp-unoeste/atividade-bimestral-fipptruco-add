@@ -53,8 +53,6 @@ export default class UsuarioController {
         }
     }
 
-    // No seu UsuarioController.js
-
     async info(req, res) {
         try {
             console.log('entrou no info da controller')
