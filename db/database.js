@@ -60,7 +60,7 @@ export default class Database {
                 if (error) 
                     rej(error);
                 else 
-                    res(results);
+                    res(results); 
             });
         })
     }

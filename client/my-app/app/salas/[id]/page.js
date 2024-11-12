@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect, useRef, use } from "react";
 import { io } from 'socket.io-client';
-import { useParams } from 'next/navigation';
+import { redirect, useParams } from 'next/navigation';
 
 export default function Sala() {
     const params = useParams(); 
@@ -13,6 +13,12 @@ export default function Sala() {
     let socket = useRef(null);
 
     const [nomeJogador, setNomeJogador] = useState(''); 
+    const [idJogador, setIdJogador] = useState(''); 
+    const [nomeOutrosJogadores, setOutrosJogadores] = useState([]);
+
+    // const [jogador, setJogador] = useState({}); 
+
+    let idUsuario = '';
     const [jogadorAdicionado, setJogadorAdicionado] = useState(false);  
 
     function entrou(params) {
@@ -24,13 +30,32 @@ export default function Sala() {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`, 
             },
-            body: JSON.stringify({nome: nomeJogador, sala: id})
+            body: JSON.stringify({nome: nomeJogador, salaId: id, idUsuario: idJogador})
         })
         .then(r=> {
             return r.json();
         })
         .then(r=> {            
-            setEventos(eventos => [...eventos, `${nomeJogador} entrou na sala!`]);
+            setEventos(eventos => [...eventos, `${nomeJogador} entrou na sala!!`]);
+        })
+    }
+
+    
+    function buscarOutrosJogadores(params) {
+        const token = getCookie('token'); 
+
+        fetch(URL + `/participantes/outros_por_sala/${id}/${idJogador}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`, 
+            }
+        })
+        .then(r=> {
+            return r.json();
+        })
+        .then(r=> {            
+            setOutrosJogadores(r);
         })
     }
 
@@ -40,18 +65,35 @@ export default function Sala() {
         if (parts.length === 2) return parts.pop().split(';').shift();
     }
     
-    function teste() {
-        alert(`${nomeJogador} apertou o botão`);
-    }
 
-    function emitirTeste() {
-        socket.current.emit("teste", {codSala: id});
-    }
 
     function sairDoJogo() {
         socket.current.disconnect();
         alert('Você saiu do jogo.');
+        window.location = "/salas";
     }
+
+    useEffect(() => {
+        if (nomeJogador !== '') {
+            entrou(); // Chama a função assim que nomeJogador for atualizado
+
+            buscarOutrosJogadores();
+
+            socket.current = io(URL, { query: `codSala=${id}&idUsuario=${idJogador}&nome=${nomeJogador}` });
+
+            socket.current.on("connect", () => {
+                console.log("Conectado ao servidor WebSocket");
+            });
+    
+            socket.current.on("teste", () => {
+                alert(`${nomeJogador} apertou o botão`)
+            });
+    
+            return () => {
+                socket.current.disconnect();
+            };
+        }
+    }, [nomeJogador,idJogador]); // Dependência em nomeJogador
 
     useEffect(() => {
         const token = getCookie('token');
@@ -72,42 +114,31 @@ export default function Sala() {
         .then(data => {
             if (data.nome) {
                 setNomeJogador(data.nome);
+                setIdJogador(data.id);
                 setJogadorAdicionado(true);
-                entrou(); 
             }
         })
         .catch(error => {
             console.error('Erro:', error);
         });
 
-        socket.current = io(URL, { query: `codSala=${id}` });
 
-        socket.current.on("connect", () => {
-            console.log("Conectado ao servidor WebSocket");
-        });
 
-        socket.current.on("teste", () => {
-            alert(`${nomeJogador} apertou o botão`)
-        });
-
-        return () => {
-            socket.current.disconnect();
-        };
 
     }, [id, URL]);
    
     return (
         <div style={styles.jogoContainer}>
             <div style={styles.mesaJogo}>
-                <div style={{ ...styles.jogador, top: '10%', left: '50%' }}>
-                    <h3>{nomeJogador}</h3>
-                </div>
-                <div style={{ ...styles.jogador, top: '50%', left: '0%' }}>
-                    <h3>{nomeJogador}</h3>
+                {/* <div style={{ ...styles.jogador, top: '10%', left: '50%' }}>
+                    <h3>{nomeOutrosJogadores}</h3>
+                </div> */}
+                {/* <div style={{ ...styles.jogador, top: '50%', left: '0%' }}>
+                    <h3>{nomeOutrosJogadores[1].nome}</h3>
                 </div>
                 <div style={{ ...styles.jogador, top: '50%', right: '0%' }}>
-                    <h3>{nomeJogador}</h3>
-                </div>
+                    <h3>{nomeOutrosJogadores[2].nome}</h3>
+                </div> */}
                 <div style={{ ...styles.jogador, bottom: '10%', left: '50%' }}>
                     <h3>{nomeJogador}</h3>
                 </div>

@@ -1,6 +1,6 @@
 import SalaEntity from "../entities/salaEntity.js";
 import SalaRepository from "../repositories/salaRepository.js";
-
+import ParticipanteRepository from "../repositories/participanteRepository.js";
 
 export default class SalasController {
 
@@ -51,9 +51,9 @@ export default class SalasController {
     async adicionar(req, res) {
 
         try {
-            let { nome, salaId } = req.body;
+            let { idUsuario, nome, salaId } = req.body;
 
-            if (!nome || !salaId) {
+            if (!idUsuario || !nome || !salaId) {
                 return res.status(400).json({ msg: "Parâmetros inválidos!" });
             }
 
@@ -65,13 +65,19 @@ export default class SalasController {
             }
 
             // Verifica a quantidade de participantes
-            let participantes = await repo.listarParticipantes(salaId); 
-            if (participantes.length >= 4) {
-                return res.status(400).json({ msg: "Sala cheia!" });
-            }
+            let repoParticipante = new ParticipanteRepository();
+            let participantes = await repoParticipante.listarParticipantes(salaId); 
+            // console.log('participantes.length:', participantes.length);
+            // if (participantes.length >= 4) {
+            //     return res.status(400).json({ msg: "Sala cheia!" });
+            // }
+
+            //let participanteAtual = await repoParticipante.buscarPorIdESala(salaId, idUsuario); 
+         // if (participanteAtual) {
+            //return res.status(200).json({ msg: `Jogador ${nome} já esta na sala!` });            // }
 
             // Adicionar o jogador à sala
-            let result = await repo.adicionarParticipante(salaId, nome); 
+            let result = await repoParticipante.adicionarParticipante(salaId, idUsuario); 
             if (result) {
                 res.status(200).json({ msg: `Jogador ${nome} entrou na sala com sucesso!` });
             } else {
@@ -81,18 +87,10 @@ export default class SalasController {
         catch (ex) {
             res.status(500).json({ msg: ex.message });
         }
-
-        // if(usuarios.findIndex(x=> x.nome == req.body.nome && x.sala == req.body.sala) == -1)
-        //     usuarios.push({nome: req.body.nome, sala: req.body.sala})
-        // let qtde = usuarios.length;
-        //  res.status(200).json({qtde: qtde});
     }
 
 
     async validarSala(req, res) {
-        // let cheia = usuarios.filter(x=>  x.sala == req.body.sala).length >= 4;
-        // res.status(200).json({cheia: cheia});
-
         try {
             let { salaId } = req.body;
             if (!salaId) {
@@ -110,26 +108,22 @@ export default class SalasController {
         }
     }
 
-    async remover(nome, sala) {
-        // usuarios = usuarios.filter(x=> x.nome != nome && x.sala != sala);
-        try {
-            let { nome, salaId } = req.body;
-
-            if (!nome || !salaId) {
-                return res.status(400).json({ msg: "Parâmetros inválidos!" });
-            }
-
-            let repo = new SalaRepository();
-            let result = await repo.removerParticipante(salaId, nome); // Método para remover jogador
-            if (result) {
-                res.status(200).json({ msg: `Jogador ${nome} removido da sala com sucesso!` });
-            } else {
-                res.status(500).json({ msg: "Erro ao remover jogador da sala!" });
-            }
-        }
-        catch (ex) {
-            res.status(500).json({ msg: ex.message });
-        }
-    }
+    // async remover(idUsuario, salaId) {
+    //     try {
+    //         if (!idUsuario || !salaId) {
+    //             throw new Error("Parâmetros inválidos!");
+    //         }
     
+    //         let repo = new ParticipanteRepository();
+    //         let result = await repo.removerParticipante(salaId, idUsuario); 
+    //         if (result) {
+    //             return { status: 200, msg: `Jogador removido da sala com sucesso!` };
+    //         } else {
+    //             return { status: 500, msg: "Erro ao remover jogador da sala!" };
+    //         }
+    //     } catch (ex) {
+    //         return { status: 500, msg: ex.message };
+    //     }
+    // }
+
 }

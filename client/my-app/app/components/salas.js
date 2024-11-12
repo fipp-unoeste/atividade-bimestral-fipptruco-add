@@ -12,6 +12,7 @@ export default function Salas() {
     const [lista, setLista] = useState([]);
     const [idAlteracao, setAlteracao] = useState(0);
     const sala = useRef('');
+    let socket;
 
     useEffect(() => {
         listarSalas();
@@ -82,6 +83,12 @@ export default function Salas() {
             alert("Você precisa estar logado para entrar em uma sala.");
             router.push('/login'); 
         }
+    }
+
+    function sairDaSala() {
+        socket.emit('disconnect');
+        console.log('Usuário saiu da sala');
+
     }
 
     return (

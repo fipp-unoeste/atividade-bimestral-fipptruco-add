@@ -5,7 +5,6 @@ export default class EquipeRepository extends BaseRepository {
 
     constructor(db) {
         super(db);
-        this.db = db; 
     }
 
     async listar() {
