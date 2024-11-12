@@ -6,6 +6,7 @@ export default class ParticipanteRepository extends BaseRepository {
 
     constructor(db) {
         super(db);
+        this.db = db; 
     }
 
     async listar() {

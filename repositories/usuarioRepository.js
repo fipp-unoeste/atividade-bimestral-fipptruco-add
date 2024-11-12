@@ -5,6 +5,7 @@ export default class UsuarioRepository extends BaseRepository {
 
     constructor(db) {
         super(db);
+        this.db = db; 
     }
 
     async validarAcesso(email, senha) {
