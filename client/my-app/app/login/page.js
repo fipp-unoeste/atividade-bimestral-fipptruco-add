@@ -1,10 +1,12 @@
 'use client'
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Login() {
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
+    const router = useRouter();
 
     const BuscarUsuario = async (usuario) => {
         try {
@@ -24,7 +26,7 @@ export default function Login() {
             }
             else
             {
-                window.location.href = '/salas';            
+                router.push('/salas');             
             }
 
         } catch (error) {

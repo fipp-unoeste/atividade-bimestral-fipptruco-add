@@ -108,22 +108,22 @@ export default class SalasController {
         }
     }
 
-    // async remover(idUsuario, salaId) {
-    //     try {
-    //         if (!idUsuario || !salaId) {
-    //             throw new Error("Parâmetros inválidos!");
-    //         }
+    async remover(idUsuario, salaId) {
+        try {
+            if (!idUsuario || !salaId) {
+                throw new Error("Parâmetros inválidos!");
+            }
     
-    //         let repo = new ParticipanteRepository();
-    //         let result = await repo.removerParticipante(salaId, idUsuario); 
-    //         if (result) {
-    //             return { status: 200, msg: `Jogador removido da sala com sucesso!` };
-    //         } else {
-    //             return { status: 500, msg: "Erro ao remover jogador da sala!" };
-    //         }
-    //     } catch (ex) {
-    //         return { status: 500, msg: ex.message };
-    //     }
-    // }
+            let repo = new ParticipanteRepository();
+            let result = await repo.removerParticipante(salaId, idUsuario); 
+            if (result) {
+                return { status: 200, msg: `Jogador removido da sala com sucesso!` };
+            } else {
+                return { status: 500, msg: "Erro ao remover jogador da sala!" };
+            }
+        } catch (ex) {
+            return { status: 500, msg: ex.message };
+        }
+    }
 
 }

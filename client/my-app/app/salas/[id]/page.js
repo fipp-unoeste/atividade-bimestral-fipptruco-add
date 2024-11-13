@@ -1,13 +1,15 @@
 'use client'
 import { useState, useEffect, useRef, use } from "react";
 import { io } from 'socket.io-client';
-import { redirect, useParams } from 'next/navigation';
+import { redirect, useParams, useRouter } from 'next/navigation';
+
 
 export default function Sala() {
     const params = useParams(); 
     const { id } = params; 
     const URL = 'http://localhost:5000';
     const URLFront = 'http://localhost:3000';
+    const router = useRouter();
 
     const [eventos, setEventos] = useState([]);
     let socket = useRef(null);
@@ -70,7 +72,7 @@ export default function Sala() {
     function sairDoJogo() {
         socket.current.disconnect();
         alert('Você saiu do jogo.');
-        window.location = "/salas";
+        router.push('/salas');   
     }
 
     useEffect(() => {
