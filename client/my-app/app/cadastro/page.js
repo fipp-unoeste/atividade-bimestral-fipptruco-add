@@ -1,10 +1,12 @@
 'use client';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function CadastroUsuario() {
     const [nome, setNome] = useState('');
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
+    const router = useRouter();
 
     const AddUsuario = async (usuario) => {
         try {
@@ -20,6 +22,9 @@ export default function CadastroUsuario() {
     
             if (!response.ok) {
                 throw new Error(data.msg || 'Erro ao cadastrar usuário'); 
+            }
+            else{
+                router.push('/login'); 
             }
     
             console.log('Usuário cadastrado com sucesso:', data);

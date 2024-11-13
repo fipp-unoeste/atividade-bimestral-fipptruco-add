@@ -6,7 +6,7 @@ import { redirect, useParams, useRouter } from 'next/navigation';
 
 export default function Sala() {
     const params = useParams(); 
-    const { id } = params; 
+    const { sal_id, eqp_id } = params; 
     const URL = 'http://localhost:5000';
     const URLFront = 'http://localhost:3000';
     const router = useRouter();
@@ -32,21 +32,40 @@ export default function Sala() {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`, 
             },
-            body: JSON.stringify({nome: nomeJogador, salaId: id, idUsuario: idJogador})
+            body: JSON.stringify({nome: nomeJogador, salaId: sal_id, idUsuario: idJogador, eqp_id: eqp_id})
         })
         .then(r=> {
             return r.json();
         })
-        .then(r=> {            
-            setEventos(eventos => [...eventos, `${nomeJogador} entrou na sala!!`]);
+        .then(r=> {
+            if(!r.ok){
+                console.error('Erro:', r.msg);
+                alert(r.msg);
+                router.push('/salas'); 
+            }
+            return r;
         })
+        .then(r=> {            
+
+            socket.current.emit("mensagem", 
+                {
+                    mensagem:`O jogador ${nomeJogador} entrou na sala`,
+                    codSala: sal_id
+                });
+
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('teste');
+            router.push('/salas'); 
+        });
     }
 
     
     function buscarOutrosJogadores(params) {
         const token = getCookie('token'); 
 
-        fetch(URL + `/participantes/outros_por_sala/${id}/${idJogador}`, {
+        fetch(URL + `/participantes/outros_por_sala/${sal_id}/${idJogador}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -77,11 +96,11 @@ export default function Sala() {
 
     useEffect(() => {
         if (nomeJogador !== '') {
-            entrou(); // Chama a função assim que nomeJogador for atualizado
+            entrou(); 
 
             buscarOutrosJogadores();
 
-            socket.current = io(URL, { query: `codSala=${id}&idUsuario=${idJogador}&nome=${nomeJogador}` });
+            socket.current = io(URL, { query: `codSala=${sal_id}&idUsuario=${idJogador}&nome=${nomeJogador}` });
 
             socket.current.on("connect", () => {
                 console.log("Conectado ao servidor WebSocket");
@@ -90,12 +109,17 @@ export default function Sala() {
             socket.current.on("teste", () => {
                 alert(`${nomeJogador} apertou o botão`)
             });
+
+            socket.current.on("mensagem", (mensagem) => {
+                setEventos(eventos => [...eventos, mensagem.mensagem]);
+            });
+    
     
             return () => {
                 socket.current.disconnect();
             };
         }
-    }, [nomeJogador,idJogador]); // Dependência em nomeJogador
+    }, [nomeJogador,idJogador]); 
 
     useEffect(() => {
         const token = getCookie('token');
@@ -127,20 +151,20 @@ export default function Sala() {
 
 
 
-    }, [id, URL]);
+    }, [sal_id, URL]);
    
     return (
         <div style={styles.jogoContainer}>
             <div style={styles.mesaJogo}>
-                {/* <div style={{ ...styles.jogador, top: '10%', left: '50%' }}>
-                    <h3>{nomeOutrosJogadores}</h3>
-                </div> */}
-                {/* <div style={{ ...styles.jogador, top: '50%', left: '0%' }}>
-                    <h3>{nomeOutrosJogadores[1].nome}</h3>
+                <div style={{ ...styles.jogador, top: '10%', left: '50%' }}>
+                    <h3></h3>
+                </div> 
+                 <div style={{ ...styles.jogador, top: '50%', left: '0%' }}>
+                    <h3></h3>
                 </div>
                 <div style={{ ...styles.jogador, top: '50%', right: '0%' }}>
-                    <h3>{nomeOutrosJogadores[2].nome}</h3>
-                </div> */}
+                    <h3></h3>
+                </div>
                 <div style={{ ...styles.jogador, bottom: '10%', left: '50%' }}>
                     <h3>{nomeJogador}</h3>
                 </div>
@@ -149,14 +173,21 @@ export default function Sala() {
                 </div>
             </div>
             <div style={styles.menuLateral}>
-                <h2 style={styles.menuLateralTitle}>Mensagens</h2>
-                <button onClick={() => socket.current.emit("teste", { codSala: id })}>Aperte aqui Antigo</button>
-                <hr></hr>
+                <div style={styles.botaoContainer}>
+                    <h2 style={styles.menuLateralTitle}>Jogadores na Sala</h2>
+                </div>
+                <br />
                 {eventos.map((evento, index) => (
                     <p key={index}>{evento}</p>
                 ))}
+                <br />
+
+                <br />
+                <div style={styles.botaoContainer}>
+                    <button style={styles.buttonTruco} onClick={() => socket.current.emit("teste", { codSala: sal_id })}>Pedir truco</button>
+                </div>
             </div>
-            <button className="button-sair" onClick={sairDoJogo}>Sair do Jogo</button>
+            <button style={styles.buttonSair} className="button-sair" onClick={sairDoJogo}>Sair do Jogo</button>
         </div>
     );
 
@@ -173,13 +204,12 @@ const styles = {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#004d00', /* Cor da mesa */
+        backgroundColor: '#004d00', 
     },
 
     mesa: {
         position: 'absolute',
         backgroundColor: '#004d00', /* Cor da mesa */
-        // border: '2px solid #000',
         borderRadius: '15px',
         width: '60%',
         height: '60%',
@@ -198,7 +228,7 @@ const styles = {
     },
 
     menuLateral: {
-        width: '220px', 
+        width: '260px', 
         backgroundColor: '#808080', 
         padding: '20px',
         overflowY: 'auto',
@@ -222,16 +252,54 @@ const styles = {
         transition: 'background-color 0.3s',
     },
     buttonSair: {
-        position: 'block',
+        position: 'fixed',
         bottom: '20px',
-        left: '50%',
+        right: '20px', 
         padding: '10px 20px',
         color: '#fff',
-        border: 'solid',
+        backgroundColor: '#FF0000',
         borderRadius: '5px',
         cursor: 'pointer',
-        backgroundColor: '#FF0000',      
         textAlign: 'center',
+        border: 'none',
+        fontSize: '16px',
+    },  
+    botaoContainer: {
+        display: 'flex', 
+        justifyContent: 'center', 
+        gap: '10px', 
+        marginBottom: '20px', 
     },
-};
 
+    buttonEquipe1: {
+        padding: '10px 20px',
+        color: '#000',
+        backgroundColor: '#FFFF00',
+        borderRadius: '5px',
+        cursor: 'pointer',
+        textAlign: 'center',
+        border: 'none',
+        fontSize: '16px',
+    },   
+
+    buttonEquipe2: {
+        padding: '10px 20px',
+        color: '#000',
+        backgroundColor: '#FFA500',
+        borderRadius: '5px',
+        cursor: 'pointer',
+        textAlign: 'center',
+        border: 'none',
+        fontSize: '16px',
+    }, 
+    buttonTruco: { 
+        padding: '10px 20px',
+        color: '#fff',
+        backgroundColor: '#4682B4',
+        borderRadius: '5px',
+        cursor: 'pointer',
+        textAlign: 'center',
+        border: 'none',
+        fontSize: '16px',
+    },  
+};

@@ -58,6 +58,21 @@ export default class ParticipanteRepository extends BaseRepository {
         }
     }
 
+//buscarPorIdESala
+async buscarPorUsuarioESala(sal_id, usu_id) {
+    const query = `
+        SELECT * FROM tb_participante
+        WHERE sal_id = ? and usu_id = ? and par_dtsaida IS NULL
+    `;
+
+    try {
+        const [rows] = await this.db.ExecutaComando(query, [sal_id, usu_id]);
+        return this.toMap(rows);
+    } catch (error) {
+        console.error("Erro ao buscar participante por ID:", error);
+        throw error;
+    }
+}
 
 
     async buscarPorId(par_id) {
@@ -115,17 +130,7 @@ export default class ParticipanteRepository extends BaseRepository {
             const query = `SELECT * FROM tb_participante WHERE sal_id = ? and par_dtsaida IS NULL`;
             let rows = await this.db.ExecutaComando(query, [salaId]); 
 
-            console.log('rows.length do listar participante:', rows.length);
-
-            // return result;
-
-             
-        if (!rows || rows.length === 0) {
-            return [];  // Retorne um array vazio se não houver participantes
-        }
-
-        return this.toMap(rows); 
-
+             return this.toMap(rows);
         } catch (error) {
             console.error("Erro ao listar participantes:", error);
             throw new Error("Erro ao listar os participantes: " + error.message);
@@ -133,13 +138,13 @@ export default class ParticipanteRepository extends BaseRepository {
     }
 
     // Adicionar um participante à sala
-    async adicionarParticipante(salaId, usuarioId, dataEntrada = new Date()) {
+    async adicionarParticipante(salaId, usuarioId, eqp_id, dataEntrada = new Date()) {
         try {
 
-            const query = `INSERT INTO tb_participante (sal_id, usu_id, par_dtentrada) VALUES (?, ?, ?)`;
-            const result = await this.db.ExecutaComandoNonQuery(query, [salaId, usuarioId, dataEntrada]);
+            const query = `INSERT INTO tb_participante (sal_id, usu_id, par_dtentrada, eqp_id) VALUES (?, ?, ?, ?)`;
+            const result = await this.db.ExecutaComandoNonQuery(query, [salaId, usuarioId, dataEntrada, eqp_id]);
             
-            return result.affectedRows > 0;
+            return result;
         } catch (error) {
             throw new Error("Erro ao adicionar participante: " + error.message);
         }

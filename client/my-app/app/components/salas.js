@@ -78,7 +78,9 @@ export default function Salas() {
         const token = getCookie('token'); 
     
         if (token) {
-            router.push(URLFront + "/salas/" + sal_id);
+            router.push(URLFront + "/salas/" + sal_id + "/equipes");
+
+            //router.push(URLFront + "/salas/" + sal_id);
         } else {
             alert("Você precisa estar logado para entrar em uma sala.");
             router.push('/login'); 
@@ -104,7 +106,7 @@ export default function Salas() {
                 <tr style={{ backgroundColor: '#4CAF50', borderBottom: '2px solid #ccc' }}>
                     <th style={{ textAlign: 'left' }}>Nome</th>
                     <th style={{ textAlign: 'left' }}>Lotação</th>
-                    <th style={{ textAlign: 'left' }}>Entrar</th>
+                    <th style={{ textAlign: 'left' }}>Ações</th>
                 </tr>
             </thead>
             <tbody>

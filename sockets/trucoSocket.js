@@ -13,20 +13,15 @@ export default function socket(io) {
       let codSala = socket.handshake.query.codSala;
       let nome = socket.handshake.query.nome;
 
-      console.log('socket.handshake.query:', socket.handshake.query);
-      console.log('idUsuario:', idUsuario);
-
       socket.join(codSala);
       io.to(codSala).emit('entrar', {participante: nome});
       io.to(codSala).emit('entrar', {});
 
         socket.on('disconnect', async (s) => {
-          console.log('idUsuario desconectado:', idUsuario);
+          
           const resultado = await salasController.remover(idUsuario, codSala);
           if (resultado.status === 200) {
               socket.emit('sair', { mensagem: "Você saiu da sala. Redirecionando para salas disponíveis..." });
-
-              // io.to(codSala).emit('sair', { saiu: true, participante: nome });
           } else {
               console.error("Erro ao remover o jogador:", resultado.msg);
           }
@@ -35,5 +30,12 @@ export default function socket(io) {
       socket.on("teste", (msg) => {
         io.to(msg.codSala).emit("teste", msg);
       })
+
+      socket.on("mensagem", (msg) => {
+          io.to(msg.codSala).emit("mensagem", {
+              nome: msg.nome,  
+              mensagem: msg.mensagem,  
+          });
+      });
     });
 }

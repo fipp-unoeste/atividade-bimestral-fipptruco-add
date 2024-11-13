@@ -37,8 +37,6 @@ const jogadores = {};
 socketInit(io);
 
 io.on('connection', (socket) => {
-  console.log('Usuário conectado');
-  console.log('Handshake Query:', socket.handshake.query);
   const idUsuario = socket.handshake.query.idUsuario;
   const codSala = socket.handshake.query.codSala;
   const nome = socket.handshake.query.nome;
@@ -51,7 +49,6 @@ io.on('connection', (socket) => {
 
   socket.on('registrarJogador', (nome) => {
       jogadores[socket.id] = nome;
-      console.log(`${nome} se juntou ao jogo.`);
       io.emit('atualizarJogadores', Object.values(jogadores));
   });
 
@@ -74,7 +71,6 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
-    console.log('Usuário desconectado');
     delete jogadores[socket.id];
     
     io.emit('atualizarJogadores', Object.values(jogadores));
