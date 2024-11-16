@@ -12,6 +12,7 @@ import routerSalas from './Routes/salasRoutes.js';
 import routerBaralho from './Routes/baralhoRoutes.js';
 import participanteRoutes from './Routes/participanteRoutes.js';
 import equipeRoutes from './Routes/equipeRoutes.js';
+import jogoRoutes from './Routes/jogoRoutes.js';
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -89,6 +90,7 @@ app.use("/salas", routerSalas);
 app.use("/baralho", routerBaralho);
 app.use('/participantes', participanteRoutes);
 app.use('/equipe', equipeRoutes);
+app.use('/jogo', jogoRoutes);
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
