@@ -12,7 +12,6 @@ export default class AuthMiddleware {
 
     async validar(req, res, next) {
         const token = req.headers.authorization && req.headers.authorization.split(' ')[1]; 
-        console.log("3 - Token:", token);
         if(token){
             try {
                 let objUsuario = jwt.verify(token, SEGREDO);

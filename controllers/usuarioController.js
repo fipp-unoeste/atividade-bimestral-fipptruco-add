@@ -39,12 +39,7 @@ export default class UsuarioController {
 
             let auth = new AuthMiddleware();
             let token = auth.gerarToken(usuario.id, usuario.email);
-
-            console.log("1 - Token:", token);
             res.cookie("token", token);
-
-            console.log("2 - Token:", token);
-
             res.status(200).json({token});
         }
         catch(ex) {
@@ -55,7 +50,6 @@ export default class UsuarioController {
 
     async info(req, res) {
         try {
-            console.log('entrou no info da controller')
             const usuario = req.usuarioLogado;
             
             if (!usuario) {
@@ -63,7 +57,8 @@ export default class UsuarioController {
             }
 
             res.status(200).json({
-                nome: usuario.nome
+                nome: usuario.nome,
+                id: usuario.id
             });
         } catch (ex) {
             console.error("Erro ao obter informações do usuário:", ex);

@@ -11,6 +11,10 @@ router.get("/", auth.validar, (req, res) => {
     ctrl.listar(req, res);
 });
 
+router.get("/:sal_id/equipes", auth.validar, (req, res) => {
+    ctrl.listarEquipes(req, res);
+});
+
 router.post("/", auth.validar ,(req, res) => {
     ctrl.criar(req, res);
 });
