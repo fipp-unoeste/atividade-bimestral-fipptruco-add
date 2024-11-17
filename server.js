@@ -6,6 +6,10 @@ import { Server } from 'socket.io';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import socketInit from './sockets/trucoSocket.js';
+import swaggerUi from 'swagger-ui-express'
+import { createRequire } from "module";
+
+
 
 import routerUsuarios from './Routes/usuarioRoute.js';
 import routerSalas from './Routes/salasRoutes.js';
@@ -16,6 +20,9 @@ import jogoRoutes from './Routes/jogoRoutes.js'
 import maoRoutes from './Routes/maoRoutes.js';
 import rodadaRoutes from './Routes/rodadaRoutes.js';
 import cartaRoutes from './Routes/cartaRoutes.js';
+
+const require = createRequire(import.meta.url);
+const outputJson = require("./swagger-output.json");
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -88,6 +95,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.static(__dirname + '/public'));
 
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(outputJson))
 app.use("/usuarios", routerUsuarios);
 app.use("/salas", routerSalas);
 app.use("/baralho", routerBaralho);
