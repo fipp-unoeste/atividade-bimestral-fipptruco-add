@@ -15,6 +15,7 @@ import equipeRoutes from './Routes/equipeRoutes.js';
 import jogoRoutes from './Routes/jogoRoutes.js'
 import maoRoutes from './Routes/maoRoutes.js';
 import rodadaRoutes from './Routes/rodadaRoutes.js';
+import cartaRoutes from './Routes/cartaRoutes.js';
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -95,6 +96,7 @@ app.use('/equipe', equipeRoutes);
 app.use('/jogo', jogoRoutes);
 app.use('/mao', maoRoutes);
 app.use('/rodada', rodadaRoutes);
+app.use('/carta', cartaRoutes);
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {

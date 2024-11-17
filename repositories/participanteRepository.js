@@ -74,31 +74,13 @@ async buscarPorUsuarioESala(sal_id, usu_id) {
     }
 }
 
+async buscarPorId(id) {
+    let sql = "select * from tb_participante where par_id = ?";
+    let valores = [id];
 
-    async buscarPorId(par_id) {
-        const query = `
-            SELECT * FROM tb_participante
-            WHERE par_id = ?
-        `;
-
-        try {
-            const [rows] = await db.ExecutaComando(query, [par_id]);
-            if (rows.length === 0) return null;
-
-            const row = rows[0];
-            return new ParticipanteEntity(
-                row.par_id,
-                row.entrada,
-                row.saida,
-                row.usu_id,
-                row.sal_id,
-                row.eqp_id
-            );
-        } catch (error) {
-            console.error("Erro ao buscar participante por ID:", error);
-            throw error;
-        }
-    }
+    let row = await this.db.ExecutaComando(sql, valores);
+    return this.toMap(row[0]);
+}
 
     async atualizar(participante) {
         const query = `

@@ -1,9 +1,7 @@
 export default class Adapter {
 
-
     constructor() {
     }
-
 
     async novoDeck() {
         try {
@@ -15,8 +13,7 @@ export default class Adapter {
         }
     }
 
-
-    async distribuirCartas(deck_id) {
+    async distribuirCartasParaParticipante(deck_id) {
         try {
             let response = await fetch(`https://deckofcardsapi.com/api/deck/${deck_id}/draw/?count=3`);
             if (!response.ok) {
@@ -33,7 +30,6 @@ export default class Adapter {
             throw new Error("Erro ao distribuir cartas: " + ex.message);
         }
     }
-
 
     async virarCarta(deck_id) {
         try {
@@ -54,5 +50,3 @@ export default class Adapter {
         }
     }
 }
-
-
