@@ -8,12 +8,18 @@ export default class Database {
 
     constructor() {
 
-        //testando localhost
+        // //testando localhost
+        // this.#conexao = mysql.createPool({
+        //     host: 'Localhost', 
+        //     database: 'truco', 
+        //     user: 'root', 
+        //     password: '',
+        // });
         this.#conexao = mysql.createPool({
-            host: 'Localhost', 
-            database: 'truco', 
-            user: 'root', 
-            password: '',
+            host: '132.226.245.178', //endereço do nosso banco de dados na nuvem
+            database: 'ATIVIDADE_10442313510', //a database de cada um de vocês possui a nomenclatura DB_(RA)
+            user: '10442313510', // usuario e senha de cada um de vocês é o RA
+            password: '10442313510',
         });
     }
 

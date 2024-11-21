@@ -18,11 +18,12 @@ export default class CartaController {
         "2": 9,
         "3": 10,
     };
-   
+
+    //ouros, espadas, copas, paus
     #ordemNaipes = ["DIAMONDS", "SPADES", "HEARTS", "CLUBS"];
 
     calcularValorVira = (card, vira) => {
-        // Determinar o valor da vira
+        // Determina o valor da vira
         const viraValue = this.#trucoValores[vira.value];
         const manilhaValue = viraValue === 10 ? 1 : viraValue + 1;
      
