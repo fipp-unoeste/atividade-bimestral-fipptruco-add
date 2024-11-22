@@ -49,7 +49,7 @@ export default function Sala() {
 
             socket.current.emit("mensagem", 
                 {
-                    mensagem:`O jogador ${nomeJogador} entrou na sala`,
+                    mensagem:`O jogador ${nomeJogador} entrou na sala pela equipe ${eqp_id}`,
                     codSala: sal_id
                 });
 

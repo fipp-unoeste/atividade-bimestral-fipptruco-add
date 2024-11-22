@@ -8,7 +8,10 @@ export default class SalaRepository extends BaseRepository {
     }
 
     async listar() {
-        let sql = "select * from tb_sala";
+        let sql = `select s.*, count(p.par_id) as qtde_participantes
+                    from tb_sala s
+                    left join tb_participante p on p.sal_id = s.sal_id and p.par_dtsaida is null
+                    group by s.sal_id, s.sal_nome, s.usu_id`;
         let lista = [];
         let rows = await this.db.ExecutaComando(sql);
 
@@ -19,7 +22,6 @@ export default class SalaRepository extends BaseRepository {
         
         let sql = "insert into tb_sala (sal_nome, usu_id) values (?,?)";
         let valores = [entidade.nome, entidade.usu_id];
-        console.log('valores', valores);
 
         let salaId = await this.db.ExecutaComandoLastInserted(sql, valores);
         let result = salaId > 0 ;
@@ -105,6 +107,7 @@ export default class SalaRepository extends BaseRepository {
             sala.sal_id = row.sal_id;
             sala.nome = row.sal_nome;
             sala.usu_id = row.usu_id;
+            sala.qtde_participantes = row.qtde_participantes;
             return sala;
         }) 
         : new SalaEntity(rows.sal_id, rows.sal_nome, rows.usu_id);

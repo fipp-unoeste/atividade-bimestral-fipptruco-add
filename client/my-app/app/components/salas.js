@@ -38,8 +38,8 @@ export default function Salas() {
     
     function getUserIdFromToken(token) {
         if (!token) return null;
-        const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decodifica o payload
-        return decodedToken.id; // Retorna o id do usuário do payload
+        const decodedToken = JSON.parse(atob(token.split('.')[1])); 
+        return decodedToken.id; 
     }
 
     async function criarSala() {
@@ -112,15 +112,15 @@ export default function Salas() {
                 </tr>
                 <tr style={{ backgroundColor: '#4CAF50', borderBottom: '2px solid #ccc' }}>
                     <th style={{ textAlign: 'left' }}>Nome</th>
-                    <th style={{ textAlign: 'left' }}>Lotação</th>
-                    <th style={{ textAlign: 'left' }}>Ações</th>
+                    <th style={{ textAlign: 'left' }}>Participantes</th>
+                    <th style={{ textAlign: 'left' }}></th>
                 </tr>
             </thead>
             <tbody>
                 {lista.map((value) => (
                     <tr key={value.sal_id} style={{ borderBottom: '1px solid #ccc' }}>
                         <td style={{ padding: '8px' }}>{value.nome}</td>
-                        <td style={{ padding: '8px' }}>2</td>
+                        <td style={{ padding: '8px' }}>{value.qtde_participantes}</td>
                         <td style={{ padding: '8px' }}>
                             <button onClick={() => entrar(value.sal_id)}>Entrar</button>
                         </td>

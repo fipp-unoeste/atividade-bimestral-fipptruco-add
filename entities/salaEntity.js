@@ -15,6 +15,12 @@ export default class SalaEntity extends BaseEntity{
     get usu_id() {return this.#usu_id}
     set usu_id(value) {this.#usu_id = value;}
 
+    /*propriedades que não são desta tabela sala*/ 
+    #qtde_participantes; 
+
+    get qtde_participantes() {return this.#qtde_participantes;}
+    set qtde_participantes(value) {this.#qtde_participantes = value;}
+
     constructor(sal_id, nome, usu_id) {
         super();
         this.#sal_id = sal_id;
