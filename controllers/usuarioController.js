@@ -40,7 +40,7 @@ export default class UsuarioController {
             let auth = new AuthMiddleware();
             let token = auth.gerarToken(usuario.id, usuario.email);
             res.cookie("token", token);
-            res.status(200).json({token});
+            res.status(200).json({token: token, usuario: usuario});
         }
         catch(ex) {
             console.error("Erro no login:", ex); 

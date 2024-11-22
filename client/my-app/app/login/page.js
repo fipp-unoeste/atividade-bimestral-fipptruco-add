@@ -1,15 +1,18 @@
 'use client'
 
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import UserContext from '../context/userContext';
 
 export default function Login() {
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
     const router = useRouter();
+    const {setUser} = useContext(UserContext);
 
     const BuscarUsuario = async (usuario) => {
         try {
+
             const response = await fetch('http://localhost:5000/usuarios/login', {
                 method: 'POST',
                 credentials: 'include',
@@ -18,15 +21,17 @@ export default function Login() {
                 },
                 body: JSON.stringify(usuario),
             });
-    
+
             const data = await response.json(); 
-    
+            
             if (!response.ok) {
                 throw new Error(data.msg || 'Erro ao fazer login de usuário'); 
             }
             else
             {
-                router.push('/salas');             
+                setUser(data.usuario); 
+                localStorage.setItem('usuario', JSON.stringify(data.usuario));
+                router.push('/salas');            
             }
 
         } catch (error) {

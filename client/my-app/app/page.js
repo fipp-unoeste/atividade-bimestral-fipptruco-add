@@ -1,8 +1,13 @@
 'use client'
 
 import Link from 'next/link';
+import { useContext } from "react";
+import UserContext from './context/userContext';
 
-export default function Home() {
+export default function Home({children}) {
+
+    const {user} = useContext(UserContext);
+
     return (
         <div style={styles.pageContainer}>
             <nav style={styles.nav}>
@@ -13,6 +18,12 @@ export default function Home() {
                     <Link href="/login" style={styles.navButton}>Login</Link>
                     <Link href="/cadastro" style={styles.navButton}>Cadastro</Link>
                     <Link href="/salas" style={styles.navButton}>Ver Salas</Link>
+                    <Link className="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span className="mr-2 d-none d-lg-inline text-gray-600 small">{ user ? user.nome : "Sem nome"}</span>
+                        <img className="img-profile rounded-circle"
+                            src="/img/user.jpg" />
+                    </Link>
                 </div>
             </nav>
 
