@@ -17,8 +17,9 @@ export default class SalaRepository extends BaseRepository {
 
     async criar(entidade) {
         
-        let sql = "insert into tb_sala (sal_nome) values (?)";
-        let valores = [entidade.nome];
+        let sql = "insert into tb_sala (sal_nome, usu_id) values (?,?)";
+        let valores = [entidade.nome, entidade.usu_id];
+        console.log('valores', valores);
 
         let salaId = await this.db.ExecutaComandoLastInserted(sql, valores);
         let result = salaId > 0 ;

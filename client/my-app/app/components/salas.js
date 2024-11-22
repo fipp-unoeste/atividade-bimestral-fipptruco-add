@@ -36,11 +36,18 @@ export default function Salas() {
         }
     }
     
+    function getUserIdFromToken(token) {
+        if (!token) return null;
+        const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decodifica o payload
+        return decodedToken.id; // Retorna o id do usuário do payload
+    }
 
     async function criarSala() {
         const token = getCookie('token'); 
         const nomeSala = sala.current.value.trim();
-        if (nomeSala) {
+        const usu_id = getUserIdFromToken(token); 
+
+        if (nomeSala && usu_id ) {
             try {
                 const response = await fetch(URL + '/salas', {
                     method: 'POST',
@@ -48,7 +55,7 @@ export default function Salas() {
                         'Content-Type': 'application/json',
                         "Authorization": `Bearer ${token}`, 
                     },
-                    body: JSON.stringify({ nome: nomeSala })
+                    body: JSON.stringify({ nome: nomeSala, usu_id })
                 });
                 if (response.ok) {
                     alert("Sala criada com sucesso!");

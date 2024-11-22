@@ -30,12 +30,13 @@ export default class SalasController {
 
     async criar(req, res) {
         try{
-            let {nome} = req.body;
-            if(nome) {
+            let {nome, usu_id} = req.body;
+            if(nome && usu_id) {
 
                 let entidade = new SalaEntity(
                     0, 
-                    nome
+                    nome,
+                    usu_id
                 );
 
                 let repo = new SalaRepository();
@@ -91,7 +92,7 @@ export default class SalasController {
                     qtdeNaEquipe++;
             }
 
-            if(qtdeNaEquipe == 2)
+            if(qtdeNaEquipe === 2)
                 return res.status(400).json({ ok: false, msg: "Equipe cheia!" });
 
             let participanteAtual = await repoParticipante.buscarPorUsuarioESala(salaId, idUsuario); 

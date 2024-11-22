@@ -45,6 +45,7 @@ export default function CadastroUsuario() {
     };
 
     return (
+        
         <div style={styles.container}>
             <h1 style={styles.title}>Faça seu Cadastro e Jogue</h1>
             <form style={styles.form}>

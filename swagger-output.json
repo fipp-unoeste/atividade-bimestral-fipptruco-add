@@ -198,6 +198,9 @@
                 "properties": {
                   "nome": {
                     "example": "any"
+                  },
+                  "usu_id": {
+                    "example": "any"
                   }
                 }
               }
