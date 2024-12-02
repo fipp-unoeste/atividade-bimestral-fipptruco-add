@@ -26,6 +26,9 @@ export default function Home({children}) {
                     <Link href="/login" style={styles.navButton}>Login</Link>
                     <Link href="/cadastro" style={styles.navButton}>Cadastro</Link>
                     <Link href="/salas" style={styles.navButton}>Ver Salas</Link>
+                </div>
+                <div style={styles.navUser}>
+                    
                     
                     {user && user.nome && (
                         <div style={styles.profileContainer} onClick={() => setDropdownVisible(!dropdownVisible)}>
@@ -92,6 +95,14 @@ const styles = {
     },
     navLinks: {
         display: 'flex',
+        gap: '15px',
+        // alignItems: 'center',
+        flex:'none',
+    },
+    navUser: {
+        flex: '1',
+        display: 'flex',
+        justifyContent: 'flex-end', 
         gap: '15px',
         alignItems: 'center',
     },

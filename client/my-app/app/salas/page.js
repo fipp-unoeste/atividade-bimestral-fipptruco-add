@@ -49,7 +49,7 @@ const styles = {
         WebkitTextStroke: '2px #ffffff',
         fontWeight: 'bold',
         textTransform: 'uppercase',
-        marginTop: '10px',
+        marginTop: '150px',
         
     },
     description: {
