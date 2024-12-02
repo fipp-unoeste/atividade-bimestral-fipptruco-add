@@ -20,7 +20,7 @@ export default function Home({children}) {
         <div style={styles.pageContainer}>
             <nav style={styles.nav}>
                 <div style={styles.logoContainer}>
-                    <img src="./logo-truco-megajogos.png" alt="Logo Truco Online" style={styles.logo} />
+                    <img src="./logotruco.png" alt="Logo Truco Online" style={styles.logo} />
                 </div>
                 <div style={styles.navLinks}>
                     <Link href="/login" style={styles.navButton}>Login</Link>
@@ -63,11 +63,19 @@ const styles = {
         fontFamily: 'Arial, sans-serif',
     },
     nav: {
+        // display: 'flex',
+        // justifyContent: 'space-between',
+        // alignItems: 'center',
+        // padding: '20px',
+        // // backgroundColor: '#ecac44', 
+        // backgroundColor: '#4f0405',
+        // color: '#fff',
+
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: '20px',
-        backgroundColor: '#ecac44', 
+        background: 'radial-gradient(circle, #4f0405, #2e0203 70%)', // Gradiente radial
         color: '#fff',
     },
     logoContainer: {
@@ -76,21 +84,44 @@ const styles = {
     logo: {
         width: '100px',
         height: 'auto',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#4f0405', // Mesma cor do fundo do seu `nav`
+        border: 'none',
     },
     navLinks: {
         display: 'flex',
         gap: '15px',
+        alignItems: 'center',
     },
+    // navButton: {
+    //     color: 'black',
+    //     textDecoration: 'none',
+    //     fontSize: '1.2rem',
+    //     padding: '10px',
+    //     backgroundColor: '#555555 ',
+    //     borderRadius: '5px',
+    //     transition: 'background-color 0.3s',
+    //     margin: '10px',
+    // },
+
     navButton: {
-        color: '#fff',
+        backgroundColor: '#000000', // Escolha a cor principal
+        color: '#ffffff',
         textDecoration: 'none',
         fontSize: '1.2rem',
-        padding: '15px',
-        backgroundColor: '#228B22',
+        padding: '10px 20px',
         borderRadius: '5px',
-        transition: 'background-color 0.3s',
-        margin: '10px',
+        border: '2px solid #ffd700',
+        transition: 'background-color 0.3s, transform 0.2s',
     },
+    navButtonHover: {
+        backgroundColor: '#ffd700', // Amarelo ouro
+        color: '#000000', // Preto
+    },
+    
+    
     profileContainer: {
         display: 'flex',
         flexDirection: 'column',
@@ -126,16 +157,29 @@ const styles = {
         alignItems: 'center',
         justifyContent: 'center',
         height: 'calc(100vh - 80px)', 
-        backgroundColor: '#004d00',
+        backgroundColor: 'black',
         color: '#fff',
         textAlign: 'center',
         padding: '0 20px',
     },
     title: {
-        fontSize: '2.5rem',
+        // fontSize: '2.5rem',
+        // marginBottom: '20px',
+        // color: '#ffdf00',
+        // textShadow: '2px 2px 4px #000',
+
+        fontSize: '3rem',
         marginBottom: '20px',
-        color: '#ffdf00',
-        textShadow: '2px 2px 4px #000',
+        color: '#ff0000', // Vermelho do texto principal
+        textShadow: `
+            0px 0px 8px #ff0000,   /* Brilho vermelho */
+            0px 0px 16px #ff0000,  /* Brilho mais intenso */
+            2px 2px 4px #000       /* Sombra preta leve */
+        `,
+        WebkitTextStroke: '2px #ffffff', // Borda branca ao redor do texto
+        fontWeight: 'bold', // Deixa o texto mais espesso
+        textTransform: 'uppercase',
+        
     },
     description: {
         fontSize: '1.2rem',

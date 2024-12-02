@@ -29,26 +29,38 @@ const styles = {
     container: {
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
-        backgroundColor: '#004d00', 
+        justifyContent: 'flex-start', // Manter o conteúdo na parte superior da tela
+        height: '100vh',  // A altura vai ocupar toda a tela
+        backgroundColor: '#000',  // Fundo escuro
         color: '#fff',
         fontFamily: 'Arial, sans-serif',
         textAlign: 'center',
         padding: '0 20px',
+        overflow: 'auto', // Adiciona a rolagem automática quando necessário
     },
     title: {
-        fontSize: '2.5rem',
+        fontSize: '3rem',
         marginBottom: '20px',
-        color: '#ffdf00', 
-        textShadow: '2px 2px 4px #000',
+        color: '#ff0000', // Cor vermelha combinando com a página principal
+        textShadow: `
+            0px 0px 8px #ff0000, 
+            0px 0px 16px #ff0000,  
+            2px 2px 4px #000`,
+        WebkitTextStroke: '2px #ffffff',
+        fontWeight: 'bold',
+        textTransform: 'uppercase',
+        marginTop: '10px',
+        
     },
     description: {
         fontSize: '1.2rem',
-        color: '#e0f2e9', 
+        color: '#e0f2e9',
         marginBottom: '40px',
         maxWidth: '600px',
+        lineHeight: '1.8',
+        letterSpacing: '0.5px',
+        textAlign: 'justify',
+        textShadow: '1px 1px 3px rgba(0, 0, 0, 0.5)',
     },
     buttonsContainer: {
         display: 'flex',
@@ -59,7 +71,7 @@ const styles = {
         padding: '10px 20px',
         fontSize: '1rem',
         color: '#fff',
-        backgroundColor: '#ff8c00', 
+        backgroundColor: '#ff8c00',
         border: 'none',
         borderRadius: '5px',
         cursor: 'pointer',
@@ -69,7 +81,7 @@ const styles = {
     startButton: {
         padding: '10px 20px',
         fontSize: '1rem',
-        backgroundColor: '#008c4a', 
+        backgroundColor: '#008c4a',
         color: '#fff',
         border: 'none',
         borderRadius: '5px',

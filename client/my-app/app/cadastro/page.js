@@ -95,18 +95,22 @@ const styles = {
         alignItems: 'center',
         justifyContent: 'center',
         height: '100vh',
-        backgroundColor: '#1b4d3e',
+        backgroundColor: '#000', // Cor de fundo preta, igual à página inicial
         color: '#fff',
         fontFamily: 'Arial, sans-serif',
+        padding: '0 20px',
     },
     title: {
-        fontSize: '2rem',
+        fontSize: '2.5rem',
         marginBottom: '20px',
-        color: '#ffdf00',
-        textShadow: '1px 1px 2px #000',
+        color: '#ff0000', // Vermelho do texto principal
+        textShadow: `0px 0px 8px #ff0000, 0px 0px 16px #ff0000, 2px 2px 4px #000`, // Brilho vermelho e sombra preta
+        WebkitTextStroke: '2px #ffffff', // Borda branca
+        fontWeight: 'bold',
+        textTransform: 'uppercase',
     },
     form: {
-        backgroundColor: '#2c6e49',
+        backgroundColor: '#4f0405', // Cor de fundo do formulário, igual à navegação
         padding: '20px 30px',
         borderRadius: '8px',
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
@@ -120,24 +124,24 @@ const styles = {
         display: 'block',
         marginBottom: '5px',
         fontSize: '1rem',
-        color: '#e0f2e9',
+        color: '#e0f2e9', // Cor de texto clara
     },
     input: {
         width: '100%',
         padding: '10px',
         fontSize: '1rem',
         borderRadius: '4px',
-        border: '1px solid #c8e6c9',
+        border: '1px solid #ffd700', // Cor dourada na borda
         outline: 'none',
         color: '#fff',
-        backgroundColor: '#3a6351',
+        backgroundColor: '#4f0405', 
     },
     button: {
         width: '100%',
         padding: '10px',
         fontSize: '1rem',
-        backgroundColor: '#ff8c00',
-        color: '#fff',
+        backgroundColor: '#ffd700', 
+        color: 'black',
         border: 'none',
         borderRadius: '4px',
         cursor: 'pointer',

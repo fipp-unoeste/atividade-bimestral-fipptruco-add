@@ -101,32 +101,42 @@ export default function Salas() {
     }
 
     return (
-        <table style={{ borderCollapse: 'collapse', width: '100%' }}>
-            <thead>
-                <tr>
-                    <th colSpan="3" style={{ padding: '10px' }}>
-                        <label>Nome da Sala:</label>
-                        <input ref={sala} type="text" placeholder="Nome da Sala" style={{ margin: '0 10px', color: "black" }} />
-                        <button onClick={criarSala}>Criar</button>
-                    </th>
-                </tr>
-                <tr style={{ backgroundColor: '#4CAF50', borderBottom: '2px solid #ccc' }}>
-                    <th style={{ textAlign: 'left' }}>Nome</th>
-                    <th style={{ textAlign: 'left' }}>Participantes</th>
-                    <th style={{ textAlign: 'left' }}></th>
-                </tr>
-            </thead>
-            <tbody>
-                {lista.map((value) => (
-                    <tr key={value.sal_id} style={{ borderBottom: '1px solid #ccc' }}>
-                        <td style={{ padding: '8px' }}>{value.nome}</td>
-                        <td style={{ padding: '8px' }}>{value.qtde_participantes}</td>
-                        <td style={{ padding: '8px' }}>
-                            <button onClick={() => entrar(value.sal_id)}>Entrar</button>
-                        </td>
+        <div style={{ margin: '20px' }}>
+            <div style={{ marginBottom: '20px' }}>
+                <label style={{ fontWeight: 'bold', fontSize: '16px', padding: '15px' }}>Nome da Sala:</label>
+                <input ref={sala} type="text" placeholder="Nome da Sala" style={{ padding: '10px', fontSize: '14px', width: '300px', marginRight: '10px', borderRadius: '4px' }} />
+                <button onClick={criarSala} style={{ padding: '10px 20px', fontSize: '14px', backgroundColor: '#ffd700', color: 'black', border: 'none', borderRadius: '4px' }}>
+                    Criar
+                </button>
+            </div>
+
+            <table style={{ borderCollapse: 'collapse', width: '100%', borderRadius: '8px', overflow: 'hidden', height: 'auto' }}>
+                <thead>
+                    {/* <tr>
+                        <th colSpan="3" style={{ padding: '10px' }}>
+                            <label>Nome da Sala:</label>
+                            <input ref={sala} type="text" placeholder="Nome da Sala" style={{ margin: '0 10px', color: "black" }} />
+                            <button onClick={criarSala}>Criar</button>
+                        </th>
+                    </tr> */}
+                    <tr style={{ backgroundColor: '#4f0405', borderBottom: '2px solid #ccc',width: '100%', borderRadius: '8px', overflow: 'hidden' }}>
+                        <th style={{ textAlign: 'center',padding: '10px', color: 'white'}}>Nome</th>
+                        <th style={{ textAlign: 'center',padding: '10px', color: 'white'}}>Participantes</th>
+                        <th ></th>
                     </tr>
-                ))}
-            </tbody>
-        </table>
+                </thead>
+                <tbody >
+                    {lista.map((value) => (
+                        <tr key={value.sal_id} style={{ borderBottom: '1px solid #ccc'}}>
+                            <td style={{ padding: '10px' }}>{value.nome}</td>
+                            <td style={{ padding: '10px' }}>{value.qtde_participantes}</td>
+                            <td style={{ padding: '10px' }}>
+                                <button onClick={() => entrar(value.sal_id)} style={{ padding: '5px 10px', fontSize: '14px', backgroundColor: '#be1218', color: 'white', border: 'none', borderRadius: '4px' }}>Entrar</button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
     );
 }
