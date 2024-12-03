@@ -16,7 +16,7 @@ export default function Equipe() {
 }
 const styles = {
     jogoContainer: {
-        display: 'flex',
+        // display: 'flex',
         height: '100vh',
     },
 
@@ -86,34 +86,34 @@ const styles = {
         border: 'none',
         fontSize: '16px',
     },  
-    botaoContainer: {
-        display: 'flex', 
-        justifyContent: 'center', 
-        gap: '10px', 
-        marginBottom: '20px', 
-    },
+    // botaoContainer: {
+    //     display: 'flex', 
+    //     justifyContent: 'center', 
+    //     gap: '10px', 
+    //     marginBottom: '20px', 
+    // },
 
-    buttonEquipe1: {
-        padding: '10px 20px',
-        color: '#000',
-        backgroundColor: '#FFFF00',
-        borderRadius: '5px',
-        cursor: 'pointer',
-        textAlign: 'center',
-        border: 'none',
-        fontSize: '16px',
-    },   
+    // buttonEquipe1: {
+    //     padding: '10px 20px',
+    //     color: '#000',
+    //     backgroundColor: '#FFFF00',
+    //     borderRadius: '5px',
+    //     cursor: 'pointer',
+    //     textAlign: 'center',
+    //     border: 'none',
+    //     fontSize: '16px',
+    // },   
 
-    buttonEquipe2: {
-        padding: '10px 20px',
-        color: '#000',
-        backgroundColor: '#FFA500',
-        borderRadius: '5px',
-        cursor: 'pointer',
-        textAlign: 'center',
-        border: 'none',
-        fontSize: '16px',
-    }, 
+    // buttonEquipe2: {
+    //     padding: '10px 20px',
+    //     color: '#000',
+    //     backgroundColor: '#FFA500',
+    //     borderRadius: '5px',
+    //     cursor: 'pointer',
+    //     textAlign: 'center',
+    //     border: 'none',
+    //     fontSize: '16px',
+    // }, 
     buttonTruco: { 
         padding: '10px 20px',
         color: '#fff',

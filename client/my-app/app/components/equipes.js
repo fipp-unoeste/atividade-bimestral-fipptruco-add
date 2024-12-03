@@ -29,11 +29,56 @@ export default function Equipes() {
 
     function renderizarLinhas(){
             return (
-                <div>
+                <div style={{ fontFamily: 'Arial, sans-serif',background: 'radial-gradient(circle, #4f0405, #2e0203 70%)', color: '#fff',
+                    height: '100vh',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center'}}>
+
+                    <h1 style={{fontSize: '2.5rem',
+                                marginBottom: '20px',
+                                color: '#ff0000', // Vermelho vibrante, similar ao título da página principal
+                                textShadow: `
+                                    0px 0px 8px #ff0000, 
+                                    0px 0px 16px #ff0000, 
+                                    2px 2px 4px #000
+                                `,
+                                WebkitTextStroke: '2px #ffffff',
+                                fontWeight: 'bold',
+                                textTransform: 'uppercase',}}>
+                                    Escolha sua Equipe
+                    </h1>
+
+                    <div style={{ display: 'flex',gap: '20px',marginTop: '20px',}}>
+                        <button style={{padding: '15px 30px',
+                            fontSize: '1.2rem',
+                            color: '#000',
+                            textDecoration: 'none',
+                            borderRadius: '10px',
+                            border: '2px solid #ffd700',
+                            backgroundColor: '#ffa500',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s ease',
+                            textAlign: 'center',}} onClick={() => entrar(1)}>
+                                Entrar pela Equipe 1
+                        </button>
+                        <br/>
+                        <button style={{ padding: '15px 30px',
+                            fontSize: '1.2rem',
+                            color: '#000',
+                            textDecoration: 'none',
+                            borderRadius: '10px',
+                            border: '2px solid #ffd700',
+                            backgroundColor: '#ffa500',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s ease',
+                            textAlign: 'center',}} onClick={() => entrar(2)}>
+                                Entrar pela Equipe 2
+                        </button>
+                    </div>
+
                     
-                    <button onClick={() => entrar(1)}>Entrar pela Equipe 1</button>
-                    <br/>
-                    <button onClick={() => entrar(2)}>Entrar pela Equipe 2</button>
             </div>
             );
         
