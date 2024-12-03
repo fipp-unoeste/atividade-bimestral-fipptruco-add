@@ -32,7 +32,7 @@ export default function Home({children}) {
                     
                     {user && user.nome && (
                         <div style={styles.profileContainer} onClick={() => setDropdownVisible(!dropdownVisible)}>
-                            <img src="./profile.png" alt="Profile" style={styles.profileImage} />
+                            <img src="./usuario.png" alt="Profile" style={styles.profileImage} />
                             <span style={styles.profileName}>{userName}</span>
                             <div style={dropdownVisible ? styles.dropdownMenuActive : styles.dropdownMenu}>
                                 <a className="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
@@ -163,14 +163,18 @@ const styles = {
         display: 'block',
     },
     container: {
+
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        height: 'calc(100vh - 80px)', 
-        backgroundColor: 'black',
-        color: '#fff',
-        textAlign: 'center',
+        height: 'calc(100vh - 80px)', // Calcula a altura total menos a navbar
+        background: 'black url("./casino.jpg") no-repeat', // Caminho da imagem
+        backgroundSize: 'auto', // Faz a imagem cobrir toda a área do container
+        // backgroundRepeat: 'no-repeat', // Evita repetição da imagem
+        // backgroundPosition: 'left center', // Centraliza a imagem
+        color: '#fff', // Cor do texto para contraste
+        textAlign: 'left',
         padding: '0 20px',
     },
     title: {
@@ -210,5 +214,6 @@ const styles = {
         maxWidth: '700px',
         textAlign: 'justify',
         textShadow: '1px 1px 2px rgba(0, 0, 0, 0.3)',
+        alignItems: 'left',
     },
 };
