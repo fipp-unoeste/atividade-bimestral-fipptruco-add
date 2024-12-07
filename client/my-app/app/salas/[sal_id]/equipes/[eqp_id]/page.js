@@ -1,125 +1,80 @@
 'use client'
-import { useState, useEffect, useRef, use } from "react";
-import { io } from 'socket.io-client';
-import { redirect, useParams, useRouter } from 'next/navigation';
+import { useState, useEffect} from "react";
+import {  useParams, useRouter } from 'next/navigation';
+import { getSocket, disconnectSocket } from "@/app/libs/socket";
+import useSocketEvent from '@/app/hooks/useSocketEvent';
 
 
 export default function Sala() {
     const params = useParams(); 
     const { sal_id, eqp_id } = params; 
     const URL = 'http://localhost:5000';
-    const URLFront = 'http://localhost:3000';
     const router = useRouter();
-
     const [eventos, setEventos] = useState([]);
-    let socket = useRef(null);
-
     const [nomeJogador, setNomeJogador] = useState(''); 
     const [idJogador, setIdJogador] = useState(''); 
-    const [nomeOutrosJogadores, setOutrosJogadores] = useState([]);
+    const [jogadores, setJogadores] = useState([]);
+    const [maos, setMaos] = useState([]);
+    const [maoAtual, setMaoAtual] = useState({});
 
-    // const [jogador, setJogador] = useState({}); 
-
-    let idUsuario = '';
-    const [jogadorAdicionado, setJogadorAdicionado] = useState(false);  
-
-    function entrou(params) {
-        const token = getCookie('token'); 
-
-        fetch(URL + '/salas/adicionar', {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`, 
-            },
-            body: JSON.stringify({nome: nomeJogador, salaId: sal_id, idUsuario: idJogador, eqp_id: eqp_id})
-        })
-        .then(r=> {
-            return r.json();
-        })
-        .then(r=> {
-            if(!r.ok){
-                console.error('Erro:', r.msg);
-                alert(r.msg);
-                router.push('/salas'); 
-            }
-            return r;
-        })
-        .then(r=> {            
-
-            socket.current.emit("mensagem", 
-                {
-                    mensagem:`O jogador ${nomeJogador} entrou na sala pela equipe ${eqp_id}`,
-                    codSala: sal_id
-                });
-
-        })
-        .catch(error => {
-            console.error('Erro:', error);
-            alert('teste');
-            router.push('/salas'); 
-        });
-    }
-
+    const posicoesEquipe1 = [
+        { top: '10%', left: '50%' },
+        { bottom: '10%', left: '50%' },
+    ];
     
-    function buscarOutrosJogadores(params) {
-        const token = getCookie('token'); 
+    const posicoesEquipe2 = [
+        { top: '50%', left: '0%' },
+        { top: '50%', right: '0%' },
+    ];
 
-        fetch(URL + `/participantes/outros_por_sala/${sal_id}/${idJogador}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`, 
-            }
-        })
-        .then(r=> {
-            return r.json();
-        })
-        .then(r=> {            
-            setOutrosJogadores(r);
-        })
-    }
+    useSocketEvent('setup', (command) => {
+        console.log('Recebendo o evento setup');
+        setJogadores(Object.values(command.jogadores));
+    });
+
+    useSocketEvent('add-player', (command) => {
+        console.log('Recebendo o evento add-player');
+        setJogadores((prev) => [...prev, command.jogador]);
+    });
+
+    useSocketEvent('player-disconnected', (command) => {
+        console.log('Recebendo o evento player-disconnected');
+        setJogadores((prev) => prev.filter((jogador) => jogador.id !== command.jogador.id));
+    });
+
+    useSocketEvent('nova-mao', (command) => {
+        console.log('Recebendo o evento nova-mao');
+        setJogadores(Object.values(command.jogadores));
+        setMaos((prev) => [...prev, command.mao]);
+        setMaoAtual(command.mao);
+    });
 
     function getCookie(name) {
         const value = `; ${document.cookie}`;
         const parts = value.split(`; ${name}=`);
         if (parts.length === 2) return parts.pop().split(';').shift();
     }
-    
 
-
-    function sairDoJogo() {
-        socket.current.disconnect();
-        alert('Você saiu do jogo.');
-        router.push('/salas');   
+    function sair() {
+        disconnectSocket();
+        router.push('/salas');
     }
 
-    useEffect(() => {
-        if (nomeJogador !== '') {
-            entrou(); 
+    function renderizarCartas(cartas) {
+        return (
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
+                {cartas.map((carta, index) => (
+                    <img 
+                        key={index} 
+                        src={carta.image} 
+                        alt="Cartas Truco" 
+                        style={styles.cartas} 
+                    />
+                ))}
+            </div>        
+        );
+    }
 
-            buscarOutrosJogadores();
-
-            socket.current = io(URL, { query: `codSala=${sal_id}&idUsuario=${idJogador}&nome=${nomeJogador}` });
-
-            socket.current.on("connect", () => {
-                console.log("Conectado ao servidor WebSocket");
-            });
-    
-            socket.current.on("teste", () => {
-                alert(`${nomeJogador} apertou o botão`)
-            });
-
-            socket.current.on("mensagem", (mensagem) => {
-                setEventos(eventos => [...eventos, mensagem.mensagem]);
-            });
-    
-    
-            return () => {
-                socket.current.disconnect();
-            };
-        }
-    }, [nomeJogador,idJogador]); 
 
     useEffect(() => {
         const token = getCookie('token');
@@ -139,59 +94,89 @@ export default function Sala() {
         })
         .then(data => {
             if (data.nome) {
+                const socket = getSocket();
+                socket.emit('add-player',{id: data.id, nome: data.nome, sal_id: sal_id, eqp_id: eqp_id});
                 setNomeJogador(data.nome);
                 setIdJogador(data.id);
-                setJogadorAdicionado(true);
             }
         })
         .catch(error => {
             console.error('Erro:', error);
         });
+    }, [sal_id, eqp_id, URL]);
 
-
-
-
-    }, [sal_id, URL]);
-   
     return (
         <div style={styles.jogoContainer}>
             <div style={styles.mesaJogo}>
-                <div style={{ ...styles.jogador, top: '10%', left: '50%' }}>
-                    <h3></h3>
-                </div> 
-                 <div style={{ ...styles.jogador, top: '50%', left: '0%' }}>
-                    <h3></h3>
-                </div>
-                <div style={{ ...styles.jogador, top: '50%', right: '0%' }}>
-                    <h3></h3>
-                </div>
-                <div style={{ ...styles.jogador, bottom: '10%', left: '50%' }}>
-                    <h3>{nomeJogador}</h3>
-                </div>
+
+                {/* POSICIONANDO EQUIPE 1 */}
+                {jogadores.filter((jogador) => jogador.eqp_id != 2).map((jogador, index) => (
+                    <div key={index} style={{ ...styles.jogadorEquipe1, ...posicoesEquipe1[index] }}>
+                        <h3>{jogador.nome} {jogador.id == idJogador ? ' (Você)' : ''}</h3>
+                        {Object.keys(maoAtual).length > 0 &&  
+                            ( jogador.id == idJogador ? (
+                                jogador.cartas.map((carta, index) => (
+                                    <div style={{ position: 'absolute', bottom: '30%', left: '50%', transform: 'translateX(-50%)' }}>
+                                       {renderizarCartas(jogador.cartas)}
+                                    </div>
+                                    // <img key={index} src={carta.image} alt="Cartas Truco" style={styles.cartas} />
+                                ))
+                            ) : (
+                                <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
+                                    <img src="/cartaVerso.png" alt="Cartas Truco" style={styles.cartaVerso} />
+                                    <img src="/cartaVerso.png" alt="Cartas Truco" style={styles.cartaVerso} />
+                                    <img src="/cartaVerso.png" alt="Cartas Truco" style={styles.cartaVerso} />
+                                </div>
+                            ))
+                        }
+                        {/* {jogador.id == idJogador && jogador.cartas ? 
+                        (jogador.cartas.map((carta, index) => (
+                            <img key={index} src={carta.image} alt="Cartas Truco" style={styles.cartas} />
+                        ))) 
+                        : (<img key={index} src="/cartaVerso.png" alt="Cartas Truco" style={styles.cartas} />)} */}
+                    </div> 
+                ))}
+                {/* POSICIONANDO EQUIPE 2*/}
+                {jogadores.filter((jogador) => jogador.eqp_id != 1).map((jogador, index) => (
+                    <div key={index} style={{ ...styles.jogadorEquipe2, ...posicoesEquipe2[index] }}>
+                        <h3>{jogador.nome} {jogador.id == idJogador ? ' (Você)' : ''}</h3>
+                    </div> 
+                ))}
+
+
                 <div style={styles.mesa}>
                     <h2>Mesa de Truco</h2>
+                    {maoAtual.vira == null ? '' : <img src={maoAtual.vira.image} alt="Cartas Truco" style={styles.cartaVerso} />}   
                 </div>
             </div>
+            
             <div style={styles.menuLateral}>
                 <div style={styles.botaoContainer}>
                     <h2 style={styles.menuLateralTitle}>Jogadores na Sala</h2>
                 </div>
                 <br />
-                {eventos.map((evento, index) => (
-                    <p key={index}>{evento}</p>
+                {jogadores.map((jogador, index) => (
+                    <p key={index}>{jogador.nome}</p>
                 ))}
                 <br />
 
                 <br />
                 <div style={styles.botaoContainer}>
-                    <button style={styles.buttonTruco} onClick={() => socket.current.emit("teste", { codSala: sal_id })}>Pedir truco</button>
+                    <button style={styles.buttonTruco} onClick={() => getSocket.emit("teste", { codSala: sal_id })}>Pedir truco</button>
+                </div>
+                <div style={styles.botaoContainer}>
+                    {jogadores.length == 4 && (
+                        <button style={styles.buttonIniciarJogo} onClick={() => getSocket.emit("nova-mao", { sal_id: sal_id })}>Iniciar Jogo</button>
+                    )}
+                    
                 </div>
             </div>
-            <button style={styles.buttonSair} className="button-sair" onClick={sairDoJogo}>Sair do Jogo</button>
+            <button style={styles.buttonSair} className="button-sair" onClick={sair}>Sair do Jogo</button>
         </div>
     );
 
 }
+
 const styles = {
     jogoContainer: {
         display: 'flex',
@@ -218,9 +203,18 @@ const styles = {
         alignItems: 'center',
     },
 
-    jogador: {
+    jogadorEquipe1: {
         position: 'absolute',
         backgroundColor: '#FF0000', /* Cor dos jogadores */
+        padding: '10px',
+        borderRadius: '5px',
+        textAlign: 'center',
+        margin: '5px 10px 5px 10px',
+    },
+
+    jogadorEquipe2: {
+        position: 'absolute',
+        backgroundColor: 'blue', /* Cor dos jogadores */
         padding: '10px',
         borderRadius: '5px',
         textAlign: 'center',
@@ -301,5 +295,40 @@ const styles = {
         textAlign: 'center',
         border: 'none',
         fontSize: '16px',
-    },  
+    },
+    
+    buttonIniciarJogo: { 
+        padding: '10px 20px',
+        color: '#fff',
+        backgroundColor: 'green',
+        borderRadius: '5px',
+        cursor: 'pointer',
+        textAlign: 'center',
+        border: 'none',
+        fontSize: '16px',
+    },
+    caixinhaMensagem: {
+        position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)', // Centraliza horizontal e verticalmente
+        backgroundColor: '#007bff', // Azul
+        color: '#fff',
+        padding: '15px',
+        borderRadius: '8px',
+        boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
+        zIndex: 1000, // Garantir que fique acima de outros elementos
+        animation: 'fadein 0.5s, fadeout 0.5s 4.5s', // Aparece e desaparece suavemente
+        textAlign: 'center', // Centraliza o texto dentro da caixa
+        //maxWidth: '80%', // Limita o tamanho da caixa
+        //wordWrap: 'break-word', // Quebra texto longo
+    },
+    cartaVerso: {
+        width: '50px', // Ajuste o tamanho conforme necessário
+        height: '80px',
+        borderRadius: '8px',
+        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+        marginTop: '40px',
+    },
+    
 };

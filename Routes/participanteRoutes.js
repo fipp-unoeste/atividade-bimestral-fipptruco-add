@@ -13,6 +13,15 @@ router.post("/associar", (req, res) => {
     }]*/
 });
 
+router.get("/por_sala/:sal_id", (req, res) => {
+    ctrl.buscarPorSala(req, res);
+   //#swagger.tags = ['Participantes'] 
+   //#swagger.summary = 'Endpoint para buscar participantes nas salas'
+   /* #swagger.security = [{
+        "bearerAuth": []
+    }]*/
+})
+
 router.get("/outros_por_sala/:sal_id/:usu_id", (req, res) => {
     ctrl.buscarOutrosPorSala(req, res);
    //#swagger.tags = ['Participantes'] 

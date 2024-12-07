@@ -130,9 +130,14 @@ export default function Salas() {
                         <tr key={value.sal_id} style={{ borderBottom: '1px solid #ccc'}}>
                             <td style={{ padding: '10px' }}>{value.nome}</td>
                             <td style={{ padding: '10px' }}>{value.qtde_participantes}</td>
-                            <td style={{ padding: '10px' }}>
-                                <button onClick={() => entrar(value.sal_id)} style={{ padding: '5px 10px', fontSize: '14px', backgroundColor: '#be1218', color: 'white', border: 'none', borderRadius: '4px' }}>Entrar</button>
-                            </td>
+                            {value.qtde_participantes < 4 ? (
+                                <td style={{ padding: '10px' }}>
+                                    <button onClick={() => entrar(value.sal_id)} style={{ padding: '5px 10px', fontSize: '14px', backgroundColor: '#be1218', color: 'white', border: 'none', borderRadius: '4px' }}>Entrar</button>
+                                </td> 
+                            ) : (
+                                <p style={{ padding: '10px' }}>Sala cheia</p>
+                            )}
+                            
                         </tr>
                     ))}
                 </tbody>

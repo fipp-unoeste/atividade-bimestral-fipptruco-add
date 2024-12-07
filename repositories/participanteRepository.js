@@ -39,11 +39,11 @@ export default class ParticipanteRepository extends BaseRepository {
     async buscarPorSala(sal_id) {
         const query = `
             SELECT * FROM tb_participante
-            WHERE sal_id = ?
+            WHERE sal_id = ? and par_dtsaida IS NULL
         `;
 
         try {
-            const [rows] = await db.ExecutaComando(query, [sal_id]);
+            const rows = await this.db.ExecutaComando(query, [sal_id]);
             return rows.map(row => new ParticipanteEntity(
                 row.par_id,
                 row.entrada,
@@ -123,14 +123,21 @@ async buscarPorId(id) {
     async adicionarParticipante(salaId, usuarioId, eqp_id, dataEntrada = new Date()) {
         try {
 
+
             const query = `INSERT INTO tb_participante (sal_id, usu_id, par_dtentrada, eqp_id) VALUES (?, ?, ?, ?)`;
-            const result = await this.db.ExecutaComandoNonQuery(query, [salaId, usuarioId, dataEntrada, eqp_id]);
-            
-            return result;
+            const participanteId = await this.db.ExecutaComandoLastInserted(query, [salaId, usuarioId, dataEntrada, eqp_id]);
+           
+            if(participanteId > 0){
+                return participanteId;
+            }
+            else{
+                return null;
+            }
         } catch (error) {
             throw new Error("Erro ao adicionar participante: " + error.message);
         }
     }
+
 
     async removerParticipante(salaId, usuarioId, dataSaida = new Date()) {
         try {

@@ -68,6 +68,18 @@ export default class ParticipanteController {
         }
     }
 
+    async buscarPorSala(req, res) {
+        try {
+            const { sal_id } = req.params;
+            const participanteRepo = new ParticipanteRepository();
+            const participantes = await participanteRepo.buscarPorSala(sal_id);
+            res.status(200).json(participantes);
+        } catch (ex) {
+            console.error("Erro ao buscar participantes:", ex);
+            res.status(500).json({ msg: ex.message });
+        }
+    }
+
     // async atualizarSaida(req, res) {
     //     try {
     //         const { id } = req.params;

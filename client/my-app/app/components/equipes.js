@@ -9,7 +9,8 @@ export default function Equipes() {
     const URL = 'http://localhost:5000';
     const URLFront = 'http://localhost:3000';
     const params = useParams(); 
-    const { sal_id } = params;     
+    const { sal_id } = params;   
+    const [participantes, setParticipantes] = useState([]);
     
     function getCookie(name) {
         const value = `; ${document.cookie}`;
@@ -26,6 +27,14 @@ export default function Equipes() {
             router.push('/login'); 
         }
     }
+
+    useEffect(() => {
+        fetch(URL + '/participantes/por_sala/' + sal_id)
+            .then(response => response.json())
+            .then(data => setParticipantes(data))
+            .catch(error => console.log(error));
+
+    }, [sal_id]);
 
     function renderizarLinhas(){
             return (
@@ -51,31 +60,37 @@ export default function Equipes() {
                     </h1>
 
                     <div style={{ display: 'flex',gap: '20px',marginTop: '20px',}}>
-                        <button style={{padding: '15px 30px',
-                            fontSize: '1.2rem',
-                            color: '#000',
-                            textDecoration: 'none',
-                            borderRadius: '10px',
-                            border: '2px solid #ffd700',
-                            backgroundColor: '#ffa500',
-                            cursor: 'pointer',
-                            transition: 'all 0.3s ease',
-                            textAlign: 'center',}} onClick={() => entrar(1)}>
-                                Entrar pela Equipe 1
-                        </button>
+                        {participantes.filter(participante => participante.eqp_id != 2).length < 2 && (
+                            <button style={{padding: '15px 30px',
+                                fontSize: '1.2rem',
+                                color: '#000',
+                                textDecoration: 'none',
+                                borderRadius: '10px',
+                                border: '2px solid #ffd700',
+                                backgroundColor: '#ffa500',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s ease',
+                                textAlign: 'center',}} onClick={() => entrar(1)}>
+                                    Entrar pela Equipe 1
+                            </button>
+                        )}
+                        
                         <br/>
-                        <button style={{ padding: '15px 30px',
-                            fontSize: '1.2rem',
-                            color: '#000',
-                            textDecoration: 'none',
-                            borderRadius: '10px',
-                            border: '2px solid #ffd700',
-                            backgroundColor: '#ffa500',
-                            cursor: 'pointer',
-                            transition: 'all 0.3s ease',
-                            textAlign: 'center',}} onClick={() => entrar(2)}>
-                                Entrar pela Equipe 2
-                        </button>
+                        {participantes.filter(participante => participante.eqp_id != 1).length < 2 && (
+                            <button style={{ padding: '15px 30px',
+                                fontSize: '1.2rem',
+                                color: '#000',
+                                textDecoration: 'none',
+                                borderRadius: '10px',
+                                border: '2px solid #ffd700',
+                                backgroundColor: '#ffa500',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s ease',
+                                textAlign: 'center',}} onClick={() => entrar(2)}>
+                                    Entrar pela Equipe 2
+                            </button>
+                        )}
+
                     </div>
 
                     

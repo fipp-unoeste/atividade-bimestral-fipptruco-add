@@ -491,6 +491,38 @@
         }
       }
     },
+    "/participantes/por_sala/{sal_id}": {
+      "get": {
+        "tags": [
+          "Participantes"
+        ],
+        "summary": "Endpoint para buscar participantes nas salas",
+        "description": "",
+        "parameters": [
+          {
+            "name": "sal_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/participantes/outros_por_sala/{sal_id}/{usu_id}": {
       "get": {
         "tags": [

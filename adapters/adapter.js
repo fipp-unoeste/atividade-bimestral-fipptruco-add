@@ -49,4 +49,24 @@ export default class Adapter {
             throw new Error("Erro ao virar a carta: " + ex.message);
         }
     }
+
+    async sacar13Cartas(deck_id) {
+        try {
+            let response = await fetch(`https://deckofcardsapi.com/api/deck/${deck_id}/draw/?count=13`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            let contentType = response.headers.get("content-type");
+            if (!contentType || !contentType.includes("application/json")) {
+                throw new Error("Unexpected content type: " + contentType);
+            }
+            let cartasDistribuidas = await response.json();
+            //console.log(cartasDistribuidas); // Log para ver a resposta recebida
+            return cartasDistribuidas;
+        } catch (ex) {
+            throw new Error("Erro ao distribuir cartas: " + ex.message);
+        }
+    }
 }
+
+

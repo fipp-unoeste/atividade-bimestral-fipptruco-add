@@ -1,41 +1,35 @@
-import { Server } from 'socket.io'
-import SalasContoller from '../controllers/salasController.js';
+import Game from '../game.js';
 
-export default function socket(io) {
+export default async function socket(socketList) {
+   
+  const game = new Game();
 
-    let salasController = new SalasContoller();
+  game.subscribe((command) => {
+    console.log(`> Emitindo o evento ${command.type}`)
+    socketList.emit(command.type, command)
+  });
+   
+  socketList.on('connection', (socket) => {
 
-    io.on('connection', (socket) => {
+    console.log(`Jogador ao server conectado: ${socket.id}`);
 
-      console.log('Nova conexão com o ID:', socket.id);
+    socket.emit('setup', game.state);
 
-      let idUsuario = socket.handshake.query.idUsuario;
-      let codSala = socket.handshake.query.codSala;
-      let nome = socket.handshake.query.nome;
-
-      socket.join(codSala);
-      io.to(codSala).emit('entrar', {participante: nome});
-      io.to(codSala).emit('entrar', {});
-
-        socket.on('disconnect', async (s) => {
-          
-          const resultado = await salasController.remover(idUsuario, codSala);
-          if (resultado.status === 200) {
-              socket.emit('sair', { mensagem: "Você saiu da sala. Redirecionando para salas disponíveis..." });
-          } else {
-              console.error("Erro ao remover o jogador:", resultado.msg);
-          }
-      });
-
-      socket.on("teste", (msg) => {
-        io.to(msg.codSala).emit("teste", msg);
-      })
-
-      socket.on("mensagem", (msg) => {
-          io.to(msg.codSala).emit("mensagem", {
-              nome: msg.nome,  
-              mensagem: msg.mensagem,  
-          });
-      });
+    socket.on('disconnect', async () => {
+      await game.RemoverJogador(socket.id);
+      console.log(game.state);
     });
+
+    socket.on('add-player', async (command) => {    
+      await game.AdicionarJogador({...command, socketId: socket.id});
+      console.log(game.state);
+    });
+
+    socket.on('nova-mao', async (command) => {    
+      await game.AdicionarMao(command);
+      console.log(game.state);
+    });
+
+
+  });
 }
