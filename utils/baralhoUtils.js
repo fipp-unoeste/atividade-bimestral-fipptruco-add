@@ -59,7 +59,7 @@ export const obterMovimencacaoVencedora = (movimentacoes) => {
 }
 
 export const obterTotalPontosPorEquipe = (maos, equipe) => {
-    return maos.filter((m) => m.equipeVencedora == equipe).reduce((sum, mao) => sum + mao.valor, 0)
+    return maos.filter((m) => m.equipeVencedoraId == equipe).reduce((sum, mao) => sum + mao.valor, 0)
 }
 
 export const distribuirCartasParaJogadores = (cartas, jogadores) => {

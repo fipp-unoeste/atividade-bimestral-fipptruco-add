@@ -66,7 +66,7 @@ export default class Game {
     }
 
     async AdicionarMao(command) {
-        const { sal_id, maoAnterior } = command;
+        const { sal_id } = command;
         const cartas = await obterCartas();
         const vira = cartas.shift();
 
@@ -87,8 +87,7 @@ export default class Game {
         this.notifyAll({
             type: 'nova-mao',
             jogadores: this.state.jogadores,
-            mao,
-            maoAnterior
+            mao
         })
     }
 
@@ -150,24 +149,23 @@ export default class Game {
         });
     }
 
-    EncerrarMao() {
+    EncerrarMao(command) {
+        this.state.maoAtual.equipeVencedoraId = command.equipeVencedoraId;
         this.state.maos.push(this.state.maoAtual);
         
-        const jogoEncerrado = obterTotalPontosPorEquipe(this.state.maos, this.state.maoAtual.equipeVencedoraId) >= 12;
+        const jogoEncerrado = obterTotalPontosPorEquipe(this.state.maos, this.state.maoAtual.equipeVencedoraId) >= 1;
 
         if (jogoEncerrado) {
             this.notifyAll({
-                type: 'mao-encerrada',
+                type: 'jogo-encerrado',
                 mao: this.state.maoAtual,
-                equipeVencedoraId: this.state.maoAtual.equipeVencedoraId,
-                jogoEncerrado
+                equipeVencedoraId: this.state.maoAtual.equipeVencedoraId
             });
             return;
         }
 
         this.AdicionarMao({
             sal_id: this.state.maoAtual.sal_id, 
-            maoAnterior: this.state.maoAtual
         });
     }
 

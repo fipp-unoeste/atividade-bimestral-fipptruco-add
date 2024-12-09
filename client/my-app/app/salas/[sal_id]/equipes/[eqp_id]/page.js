@@ -53,13 +53,8 @@ export default function Sala() {
         console.log('Recebendo o evento nova-mao');
         setEventos((prev) => [...prev, `Nova mão iniciada`]);
         setJogadores(Object.values(command.jogadores));
-        //setMaos((prev) => [...prev, command.mao]);
         setMaoAtual(command.mao);
-
-        if(command.maoAnterior) {
-            const equipeVencedoraId = command.maoAnterior.equipeVencedoraId;
-            setEventos((prev) => [...prev,`Equipe vencedora da Mão Anterior:` + command.equipeVencedoraId]);
-        }
+        setMaoEncerrada(false);
     });
 
     useSocketEvent('jogada', (command) => {
@@ -77,31 +72,26 @@ export default function Sala() {
         console.log('Recebendo o evento rodada-encerrada');
         setEventos((prev) => [...prev, `Rodada encerrada`]);
         setMaoAtual(command.mao);
-        setMaoEncerrada(command.maoEncerrada);        
-        // if(command.maoEncerrada) {
-        //     setEventos((prev) => [...prev,'Equipe vencedora da Mão: '+ command.equipeVencedoraId]);
-        //     // getSocket().emit('encerrar-mao');
-        // }
-        setRodadaEncerrada(false); // Reseta o estado
+        setMaoEncerrada(command.maoEncerrada);
+        setRodadaEncerrada(false);
+
+        if(command.maoEncerrada) {
+            setEventos((prev) => [...prev,'Equipe vencedora da Mão: '+ command.equipeVencedoraId]);
+            setEquipeVencedoraId(command.equipeVencedoraId);
+    
+            if (command.equipeVencedoraId == 1) {
+                setPontosEquipe1((prev) => prev + command.mao.valor );
+            } else {
+                setPontosEquipe2((prev) => prev + command.mao.valor );
+            }
+        }
     });
 
-    useSocketEvent('encerrar-mao', (command) => {
-        console.log('Recebendo o evento encerrar-mao');
-        setMaoAtual(command.mao);
+    useSocketEvent('jogo-encerrado', (command) => {
+        console.log('Recebendo o evento jogo encerrado');
 
-        if (command.equipeVencedoraId == 1) {
-            setPontosEquipe1((prev) => prev + command.mao.valor || 0);
-        } else if (command.equipeVencedoraId == 2) {
-            setPontosEquipe2((prev) => prev + command.mao.valor || 0);
-        }
-        setMaoEncerrada(false); // Reseta o estado
-
-        if(command.jogoEncerrado) {
-            setEventos((prev) => [...prev,'Jogo Encerrado']);
-            setEventos((prev) => [...prev,'Equipe vencedora do Jogo: '+ command.equipeVencedoraId]);
-        }else{
-            getSocket().emit('nova-mao');
-        }
+        setEventos((prev) => [...prev,'Jogo Encerrado']);
+        setEventos((prev) => [...prev,'Equipe vencedora do Jogo: '+ command.equipeVencedoraId]);
     });
 
 
@@ -276,14 +266,14 @@ export default function Sala() {
                 {/* testando rodada encerrada */}
                 <div style={styles.botaoContainer}>
                     {rodadaEncerrada && (
-                        <button style={styles.buttonEncerrarRodada} onClick={() => getSocket().emit("encerrar-rodada", { sal_id: sal_id })}>Encerrar rodada</button>
+                        <button style={styles.buttonEncerrarRodada} onClick={() => getSocket().emit("encerrar-rodada", { equipeVencedoraId: equipeVencedoraId })}>Encerrar rodada</button>
                     )}
                 </div>
 
                 {/* testando mao encerrada */}
                 <div style={styles.botaoContainer}>
                     {maoEncerrada && (
-                        <button style={styles.buttonEncerrarMao} onClick={() => getSocket().emit("encerrar-mao", { sal_id: sal_id })}>Encerrar mão</button>
+                        <button style={styles.buttonEncerrarMao} onClick={() => getSocket().emit("encerrar-mao", { equipeVencedoraId: equipeVencedoraId })}>Nova mão</button>
                     )}
                 </div>
             </div>

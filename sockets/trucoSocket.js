@@ -41,11 +41,12 @@ export default async function socket(socketList) {
       console.log(game.state);
     });
 
-    socket.on('encerrar-mao', async ()  => {    
-      await game.EncerrarMao();
+    socket.on('encerrar-mao', async (command)  => {    
+      await game.EncerrarMao(command);
       console.log(game.state);
     });
 
 
   });
+  
 }
