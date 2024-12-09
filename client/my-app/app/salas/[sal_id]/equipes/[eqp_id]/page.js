@@ -16,14 +16,19 @@ export default function Sala() {
     const [jogadores, setJogadores] = useState([]);
     const [maos, setMaos] = useState([]);
     const [maoAtual, setMaoAtual] = useState({});
+    const [rodadaEncerrada, setRodadaEncerrada] = useState(false);
+    const [equipeVencedoraId, setEquipeVencedoraId] = useState('');
+    const [maoEncerrada, setMaoEncerrada] = useState(false);
+    const [pontosEquipe1, setPontosEquipe1] = useState(0);
+    const [pontosEquipe2, setPontosEquipe2] = useState(0);
 
     const posicoesEquipe1 = [
-        { top: '10%', left: '50%' },
-        { bottom: '10%', left: '50%' },
+        { top: '20%', left: '50%' },
+        { bottom: '0%', left: '50%' },
     ];
     
     const posicoesEquipe2 = [
-        { top: '50%', left: '0%' },
+        { top: '50%', left: '3%' },
         { top: '50%', right: '0%' },
     ];
 
@@ -34,20 +39,71 @@ export default function Sala() {
 
     useSocketEvent('add-player', (command) => {
         console.log('Recebendo o evento add-player');
+        setEventos((prev) => [...prev, `${command.jogador.nome} entrou na sala`]);
         setJogadores((prev) => [...prev, command.jogador]);
     });
 
     useSocketEvent('player-disconnected', (command) => {
         console.log('Recebendo o evento player-disconnected');
+        setEventos((prev) => [...prev, `${command.jogador.nome} saiu da sala`]);
         setJogadores((prev) => prev.filter((jogador) => jogador.id !== command.jogador.id));
     });
 
     useSocketEvent('nova-mao', (command) => {
         console.log('Recebendo o evento nova-mao');
+        setEventos((prev) => [...prev, `Nova mão iniciada`]);
         setJogadores(Object.values(command.jogadores));
-        setMaos((prev) => [...prev, command.mao]);
+        //setMaos((prev) => [...prev, command.mao]);
         setMaoAtual(command.mao);
+
+        if(command.maoAnterior) {
+            const equipeVencedoraId = command.maoAnterior.equipeVencedoraId;
+            setEventos((prev) => [...prev,`Equipe vencedora da Mão Anterior:` + command.equipeVencedoraId]);
+        }
     });
+
+    useSocketEvent('jogada', (command) => {
+        console.log('Recebendo o evento jogada');
+        setMaoAtual(command.mao);
+        setJogadores(Object.values(command.jogadores));
+        setRodadaEncerrada(command.rodadaEncerrada);
+        setEquipeVencedoraId(command.equipeVencedoraId);
+        if(command.rodadaEncerrada) {
+            setEventos((prev) => [...prev,'Equipe vencedora da Rodada: '+ command.equipeVencedoraId]);
+        }
+    });
+
+    useSocketEvent('rodada-encerrada', (command) => {
+        console.log('Recebendo o evento rodada-encerrada');
+        setEventos((prev) => [...prev, `Rodada encerrada`]);
+        setMaoAtual(command.mao);
+        setMaoEncerrada(command.maoEncerrada);        
+        // if(command.maoEncerrada) {
+        //     setEventos((prev) => [...prev,'Equipe vencedora da Mão: '+ command.equipeVencedoraId]);
+        //     // getSocket().emit('encerrar-mao');
+        // }
+        setRodadaEncerrada(false); // Reseta o estado
+    });
+
+    useSocketEvent('encerrar-mao', (command) => {
+        console.log('Recebendo o evento encerrar-mao');
+        setMaoAtual(command.mao);
+
+        if (command.equipeVencedoraId == 1) {
+            setPontosEquipe1((prev) => prev + command.mao.valor || 0);
+        } else if (command.equipeVencedoraId == 2) {
+            setPontosEquipe2((prev) => prev + command.mao.valor || 0);
+        }
+        setMaoEncerrada(false); // Reseta o estado
+
+        if(command.jogoEncerrado) {
+            setEventos((prev) => [...prev,'Jogo Encerrado']);
+            setEventos((prev) => [...prev,'Equipe vencedora do Jogo: '+ command.equipeVencedoraId]);
+        }else{
+            getSocket().emit('nova-mao');
+        }
+    });
+
 
     function getCookie(name) {
         const value = `; ${document.cookie}`;
@@ -60,21 +116,70 @@ export default function Sala() {
         router.push('/salas');
     }
 
-    function renderizarCartas(cartas) {
+    function renderizarCartas(jogador) {
+        const temCartas = Object.keys(maoAtual).length > 0;
+        const renderizarCartasFrente = jogador.id == idJogador;
         return (
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
-                {cartas.map((carta, index) => (
-                    <img 
-                        key={index} 
-                        src={carta.image} 
-                        alt="Cartas Truco" 
-                        style={styles.cartas} 
-                    />
-                ))}
-            </div>        
+            temCartas && (
+                renderizarCartasFrente ? (
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
+                        {jogador.cartas.map((carta, index) => (
+                            <img 
+                                key={index} 
+                                src={carta.image} 
+                                alt="Cartas Truco" 
+                                style={styles.cartas}
+                                onClick={() => getSocket().emit('jogada', { carta })} 
+                            />
+                        ))}
+                    </div>  
+                ) :
+                (
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
+                        {jogador.cartas.map((carta, index) => (
+                            <img 
+                                key={index} 
+                                src='https://deckofcardsapi.com/static/img/back.png' 
+                                alt="Cartas Truco" 
+                                style={styles.cartas} 
+                            />
+                        ))}
+                    </div>  
+                )
+            )
+            
         );
     }
 
+    function renderizarCartasMovimentacao() {
+        return (
+            <div name="movimentacoes" style={{ display: 'flex', flexDirection: 'row', gap: '10px', padding: '10px' }}>
+                {maoAtual.movimentacoes && maoAtual.movimentacoes.filter((movimentacao) => movimentacao.tipo == 'jogada').map((movimentacao, index) => (
+                    <div key={index} style={{ textAlign: 'center' }}>
+                        <p>{movimentacao.jogador.nome}</p>
+                        <img 
+                            src={movimentacao.carta.image}
+                            alt="Cartas Truco jogadas" 
+                            style={styles.cartas} 
+                        /> 
+                    </div>
+                ))}
+
+            </div>
+        )
+    }
+
+    // function encerrarRodada() {
+    //     const socket = getSocket();
+    //     socket.emit('encerrar-rodada', { equipeVencedoraId: equipeVencedoraId });
+    //     setRodadaEncerrada(false); // Reseta o estado
+    // }
+
+    // function encerrarMao() {
+    //     const socket = getSocket();
+    //     socket.emit('mao-encerrada', { equipeVencedoraId: equipeVencedoraId });
+    //     setRodadaEncerrada(false); // Reseta o estado
+    // }
 
     useEffect(() => {
         const token = getCookie('token');
@@ -108,70 +213,94 @@ export default function Sala() {
     return (
         <div style={styles.jogoContainer}>
             <div style={styles.mesaJogo}>
-
-                {/* POSICIONANDO EQUIPE 1 */}
                 {jogadores.filter((jogador) => jogador.eqp_id != 2).map((jogador, index) => (
                     <div key={index} style={{ ...styles.jogadorEquipe1, ...posicoesEquipe1[index] }}>
                         <h3>{jogador.nome} {jogador.id == idJogador ? ' (Você)' : ''}</h3>
-                        {Object.keys(maoAtual).length > 0 &&  
-                            ( jogador.id == idJogador ? (
-                                jogador.cartas.map((carta, index) => (
-                                    <div style={{ position: 'absolute', bottom: '30%', left: '50%', transform: 'translateX(-50%)' }}>
-                                       {renderizarCartas(jogador.cartas)}
-                                    </div>
-                                    // <img key={index} src={carta.image} alt="Cartas Truco" style={styles.cartas} />
-                                ))
-                            ) : (
-                                <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
-                                    <img src="/cartaVerso.png" alt="Cartas Truco" style={styles.cartaVerso} />
-                                    <img src="/cartaVerso.png" alt="Cartas Truco" style={styles.cartaVerso} />
-                                    <img src="/cartaVerso.png" alt="Cartas Truco" style={styles.cartaVerso} />
-                                </div>
-                            ))
-                        }
-                        {/* {jogador.id == idJogador && jogador.cartas ? 
-                        (jogador.cartas.map((carta, index) => (
-                            <img key={index} src={carta.image} alt="Cartas Truco" style={styles.cartas} />
-                        ))) 
-                        : (<img key={index} src="/cartaVerso.png" alt="Cartas Truco" style={styles.cartas} />)} */}
+                        <div style={styles.containerCartas}>
+                            {renderizarCartas(jogador)}
+                        </div>
                     </div> 
                 ))}
-                {/* POSICIONANDO EQUIPE 2*/}
+                
                 {jogadores.filter((jogador) => jogador.eqp_id != 1).map((jogador, index) => (
                     <div key={index} style={{ ...styles.jogadorEquipe2, ...posicoesEquipe2[index] }}>
                         <h3>{jogador.nome} {jogador.id == idJogador ? ' (Você)' : ''}</h3>
+                        <div style={styles.containerCartas}>
+                            {renderizarCartas(jogador)}
+                        </div>
                     </div> 
                 ))}
-
-
+                
                 <div style={styles.mesa}>
-                    <h2>Mesa de Truco</h2>
-                    {maoAtual.vira == null ? '' : <img src={maoAtual.vira.image} alt="Cartas Truco" style={styles.cartaVerso} />}   
+                    {renderizarCartasMovimentacao()}
+                    <h3>Vira</h3>
+                    {/* <img src="https://deckofcardsapi.com/static/img/QH.png" alt="Cartas Truco" style={styles.cartaVerso} /> */}
+                    {maoAtual.vira == null ? '' : <img src={maoAtual.vira.image} alt="Cartas Truco" style={styles.cartaVerso} />}
                 </div>
             </div>
-            
+            <div style={styles.pontuacao}>
+                <h3 style={styles.tituloPontuacao}>Pontuação</h3>
+                <div style={styles.equipe}>
+                    <p style={styles.nomeEquipe}>Equipe 1</p>
+                    <p style={styles.valorPontuacao}>{pontosEquipe1}</p>
+                </div>
+                <div style={styles.divisor}></div> {/* Divisor entre as equipes */}
+                <div style={styles.equipe}>
+                    <p style={styles.nomeEquipe}>Equipe 2</p>
+                    <p style={styles.valorPontuacao}>{pontosEquipe2}</p>
+                </div>
+            </div>
+
             <div style={styles.menuLateral}>
                 <div style={styles.botaoContainer}>
                     <h2 style={styles.menuLateralTitle}>Jogadores na Sala</h2>
                 </div>
                 <br />
-                {jogadores.map((jogador, index) => (
-                    <p key={index}>{jogador.nome}</p>
+                {eventos.map((evento, index) => (
+                    <p key={index}>{evento}</p>
                 ))}
-                <br />
 
                 <br />
+                <br />
+
                 <div style={styles.botaoContainer}>
-                    <button style={styles.buttonTruco} onClick={() => getSocket.emit("teste", { codSala: sal_id })}>Pedir truco</button>
+                    <button style={styles.buttonTruco} onClick={() => getSocket().emit("teste", { codSala: sal_id })}>Pedir truco</button>
                 </div>
                 <div style={styles.botaoContainer}>
                     {jogadores.length == 4 && (
-                        <button style={styles.buttonIniciarJogo} onClick={() => getSocket.emit("nova-mao", { sal_id: sal_id })}>Iniciar Jogo</button>
+                        <button style={styles.buttonIniciarJogo} onClick={() => getSocket().emit("nova-mao", { sal_id: sal_id })}>Iniciar Jogo</button>
                     )}
                     
                 </div>
+
+                {/* testando rodada encerrada */}
+                <div style={styles.botaoContainer}>
+                    {rodadaEncerrada && (
+                        <button style={styles.buttonEncerrarRodada} onClick={() => getSocket().emit("encerrar-rodada", { sal_id: sal_id })}>Encerrar rodada</button>
+                    )}
+                </div>
+
+                {/* testando mao encerrada */}
+                <div style={styles.botaoContainer}>
+                    {maoEncerrada && (
+                        <button style={styles.buttonEncerrarMao} onClick={() => getSocket().emit("encerrar-mao", { sal_id: sal_id })}>Encerrar mão</button>
+                    )}
+                </div>
             </div>
             <button style={styles.buttonSair} className="button-sair" onClick={sair}>Sair do Jogo</button>
+
+            {/* testando msg de vencedor */}
+            <div style={styles.quadroVencedor} id="quadroVencedor">
+                {equipeVencedoraId && (
+                    <div>
+                        <h2>Equipe {equipeVencedoraId} venceu</h2>
+                        <button style={styles.botaoVoltar} onClick={() => voltarParaSalas()}>
+                            Voltar para Salas
+                        </button>
+                    </div>
+                )}
+            </div>
+
         </div>
     );
 
@@ -196,11 +325,10 @@ const styles = {
         position: 'absolute',
         backgroundColor: '#004d00', /* Cor da mesa */
         borderRadius: '15px',
-        width: '60%',
-        height: '60%',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        flexDirection: 'column',
     },
 
     jogadorEquipe1: {
@@ -296,6 +424,26 @@ const styles = {
         border: 'none',
         fontSize: '16px',
     },
+    buttonEncerrarRodada: { 
+        padding: '10px 20px',
+        color: '#fff',
+        backgroundColor: '#f76b00',
+        borderRadius: '5px',
+        cursor: 'pointer',
+        textAlign: 'center',
+        border: 'none',
+        fontSize: '16px',
+    },
+    buttonEncerrarMao: { 
+        padding: '10px 20px',
+        color: 'fff',
+        backgroundColor: '#ff0080',
+        borderRadius: '5px',
+        cursor: 'pointer',
+        textAlign: 'center',
+        border: 'none',
+        fontSize: '16px',
+    },
     
     buttonIniciarJogo: { 
         padding: '10px 20px',
@@ -326,9 +474,94 @@ const styles = {
     cartaVerso: {
         width: '50px', // Ajuste o tamanho conforme necessário
         height: '80px',
-        borderRadius: '8px',
+        borderRadius: '5px',
         boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-        marginTop: '40px',
+        marginTop: '10px',
     },
+    containerCartas: {
+        position: 'absolute',
+        bottom: '100%',
+        left: '50%',
+        transform: 'translateX(-50%)'
+    },
+    cartas: {
+        width: '50px',
+        height: '80px', 
+        borderRadius: '8px'
+    },
+    //pontuacao
+    pontuacao: {
+        position: 'absolute',
+        top: '10px',
+        left: '10px',
+        backgroundColor: '#f9f9f9',
+        color: '#000',
+        padding: '10px',
+        borderRadius: '8px',
+        boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
+        width: '130px', // Define uma largura fixa para manter consistência
+        zIndex: 1000,
+    },
+    tituloPontuacao: {
+        margin: 0,
+        fontSize: '14px',
+        textAlign: 'center',
+        borderBottom: '1px solid #ccc',
+        paddingBottom: '5px',
+        marginBottom: '10px',
+    },
+    equipe: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '10px',
+    },
+    nomeEquipe: {
+        fontSize: '12px',
+        fontWeight: 'bold',
+    },
+    valorPontuacao: {
+        fontSize: '12px',
+    },
+    divisor: {
+        height: '1px',
+        backgroundColor: '#ccc',
+        margin: '10px 0',
+    },
+
+    //vencedor
+    quadroVencedor: {
+        position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: '300px',
+        padding: '20px',
+        backgroundColor: '#ffffff',
+        borderRadius: '10px',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+        textAlign: 'center',
+        zIndex: 1000,
+        //visibility: 'visible', //'hidden', // Inicialmente escondido
+        visibility: 'hidden', // Inicialmente escondido
+        opacity: 0, // Para animar a transição de entrada coloque 
+        //opacity: 1, // Para animar a transição de entrada coloque 
+        transition: 'opacity 0.5s ease, visibility 0.5s ease',
+    },
+    botaoVoltar: {
+        marginTop: '20px',
+        padding: '10px 15px',
+        backgroundColor: '#4CAF50',
+        color: '#ffffff',
+        border: 'none',
+        borderRadius: '5px',
+        cursor: 'pointer',
+        fontSize: '16px',
+        transition: 'background-color 0.3s',
+    },
+    botaoVoltarHover: {
+        backgroundColor: '#45a049',
+    },
+   
     
 };

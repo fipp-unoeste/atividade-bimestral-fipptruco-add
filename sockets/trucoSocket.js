@@ -27,6 +27,22 @@ export default async function socket(socketList) {
 
     socket.on('nova-mao', async (command) => {    
       await game.AdicionarMao(command);
+      //game.AdicionarMao({ sal_id: command.sal_id });
+      console.log(game.state);
+    });
+
+    socket.on('jogada', async(command) => {    
+      await game.JogarCarta({...command, socketId: socket.id});
+      console.log(game.state);
+    });
+
+    socket.on('encerrar-rodada', async (command) => {    
+      await game.EncerrarRodada(command);
+      console.log(game.state);
+    });
+
+    socket.on('encerrar-mao', async ()  => {    
+      await game.EncerrarMao();
       console.log(game.state);
     });
 
