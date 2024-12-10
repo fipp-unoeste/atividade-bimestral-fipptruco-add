@@ -318,28 +318,29 @@ export default function Sala() {
                     )}
                 </div>
                 
-                <div style={styles.botaoContainer}>
-                    {rodadaEncerrada && (
-                        <div style={styles.overlay}>
-                            <div style={styles.quadroVencedor}>
+                
+                {rodadaEncerrada && (
+                    <div style={styles.overlay}>
+                        <div style={styles.quadroVencedor}>
+                            <div> 
                                 <h2>Clique para encerrar a rodada</h2>
                                 <button style={styles.buttonEncerrarRodada} onClick={() => getSocket().emit("encerrar-rodada", { equipeVencedoraId: equipeVencedoraId })}>Encerrar rodada</button>
-                            </div>
+                            </div> 
                         </div>
-                    )}
-                </div>
-
-                <div style={styles.botaoContainer}>
-                    {maoEncerrada && (
-                        <div style={styles.overlay}>
-                            <div style={styles.quadroVencedor}>
+                    </div>
+                )}
+                
+                {maoEncerrada && (
+                    <div style={styles.overlay}>
+                        <div style={styles.quadroVencedor}>
+                            <div>
                                 <h2>Clique para iniciar nova mão</h2>
                                 <button style={styles.buttonEncerrarMao} onClick={() => getSocket().emit("encerrar-mao", { equipeVencedoraId: equipeVencedoraId })}>Nova mão</button>
                             </div>
                         </div>
-                    )}
-                </div>
-                    
+                    </div>
+                )}
+                 
                 
             </div>
             <button style={styles.buttonSair} className="button-sair" onClick={sair}>Sair do Jogo</button>
@@ -530,8 +531,8 @@ const styles = {
     }, 
    
     buttonEncerrarRodada: { 
-        padding: '10px',
-        color: '#fff',
+        padding: '10px 20px',
+        color: '#ffffff',
         backgroundColor: '#f76b00',
         borderRadius: '5px',
         cursor: 'pointer',
@@ -539,9 +540,9 @@ const styles = {
         border: 'none',
         fontSize: '16px',
 
-        position: 'fixed',
-        bottom: '65px',
-        right: '11px', 
+        // position: 'fixed',
+        // bottom: '65px',
+        // right: '154px', 
 
     },
     buttonIniciarJogo: { 
@@ -560,7 +561,7 @@ const styles = {
     },
     buttonEncerrarMao: { 
         padding: '10px 20px',
-        color: 'fff',
+        color: '#ffffff',
         backgroundColor: '#ff0080',
         borderRadius: '5px',
         cursor: 'pointer',
@@ -568,7 +569,7 @@ const styles = {
         border: 'none',
         fontSize: '16px',
     },
-    
+
     caixinhaMensagem: {
         position: 'fixed',
         top: '50%',
