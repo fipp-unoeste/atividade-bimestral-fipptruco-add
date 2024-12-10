@@ -138,8 +138,8 @@ const styles = {
         transition: 'background-color 0.3s, transform 0.2s',
     },
     navButtonHover: {
-        backgroundColor: '#ffd700', // Amarelo ouro
-        color: '#000000', // Preto
+        backgroundColor: '#ffd700', // Cor ao passar o mouse
+        color: '#000000', // Cor do texto
     },
     
     
