@@ -555,7 +555,7 @@ const styles = {
         fontSize: '16px',
 
         position: 'fixed',
-        bottom: '65px',
+        bottom: '20px',
         right: '154px', 
     },
     buttonEncerrarMao: { 
