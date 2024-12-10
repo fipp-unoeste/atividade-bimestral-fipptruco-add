@@ -16,6 +16,7 @@ export default class Database {
             password: '',
         });
 
+        //banco da day
         // this.#conexao = mysql.createPool({
         //     host: '132.226.245.178', //endereço do nosso banco de dados na nuvem
         //     database: 'ATIVIDADE_10442313510', //a database de cada um de vocês possui a nomenclatura DB_(RA)

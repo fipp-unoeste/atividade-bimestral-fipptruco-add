@@ -163,7 +163,6 @@ const styles = {
         display: 'block',
     },
     container: {
-
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -175,8 +174,10 @@ const styles = {
         // backgroundPosition: 'left center', // Centraliza a imagem
         color: '#fff', // Cor do texto para contraste
         textAlign: 'left',
-        padding: '0 20px',
+        padding: '0px 20px 50px 500px',  // Empurra o texto para baixo
+        // padding: '0px 20px',
     },
+
     title: {
         // fontSize: '2.5rem',
         // marginBottom: '20px',
