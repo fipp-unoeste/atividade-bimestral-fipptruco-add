@@ -33,8 +33,14 @@ export default class UsuarioController {
             let {email, senha } = req.body;
             let repoUsuario = new UsuarioRepository();
             let usuario = await repoUsuario.validarAcesso(email,senha);
-            if(usuario == null){
-                res.status(400).json({msg: 'Usuário não encontrado',ok:false})
+
+            // if(usuario == null){
+            //     res.status(400).json({msg: 'Usuário não encontrado',ok:false, redirect: '/cadastro'});
+            // }
+
+            if (!usuario) {
+                // Redirecionar para a página de cadastro
+                return res.status(302).json({ msg: 'Usuário não encontrado. Redirecionando para cadastro.', redirect: '/cadastro' });
             }
 
             let auth = new AuthMiddleware();
@@ -54,6 +60,8 @@ export default class UsuarioController {
             
             if (!usuario) {
                 return res.status(404).json({ msg: "Usuário não encontrado!" });
+                // return res.status(404).redirect('/cadastro');
+
             }
 
             res.status(200).json({

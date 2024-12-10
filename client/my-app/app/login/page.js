@@ -24,11 +24,12 @@ export default function Login() {
 
             const data = await response.json(); 
             
-            if (!response.ok) {
-                throw new Error(data.msg || 'Erro ao fazer login de usuário'); 
-            }
-            else
-            {
+            if (response.status === 302 && data.redirect) {
+                router.push(data.redirect); // Redireciona para a página de cadastro
+            } else if (!response.ok) {
+                throw new Error(data.msg || 'Erro ao fazer login de usuário');
+            } else {
+           
                 setUser(data.usuario); 
                 localStorage.setItem('usuario', JSON.stringify(data.usuario));
                 router.push('/salas');            

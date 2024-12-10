@@ -22,8 +22,8 @@
           "200": {
             "description": "OK"
           },
-          "400": {
-            "description": "Bad Request"
+          "302": {
+            "description": "Found"
           },
           "500": {
             "description": "Internal Server Error"
