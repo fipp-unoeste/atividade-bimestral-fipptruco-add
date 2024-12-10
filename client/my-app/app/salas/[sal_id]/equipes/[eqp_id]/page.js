@@ -202,18 +202,6 @@ export default function Sala() {
         )
     }
 
-    // function encerrarRodada() {
-    //     const socket = getSocket();
-    //     socket.emit('encerrar-rodada', { equipeVencedoraId: equipeVencedoraId });
-    //     setRodadaEncerrada(false); // Reseta o estado
-    // }
-
-    // function encerrarMao() {
-    //     const socket = getSocket();
-    //     socket.emit('mao-encerrada', { equipeVencedoraId: equipeVencedoraId });
-    //     setRodadaEncerrada(false); // Reseta o estado
-    // }
-
     useEffect(() => {
         const token = getCookie('token');
 
@@ -267,7 +255,6 @@ export default function Sala() {
                 <div style={styles.mesa}>
                     {renderizarCartasMovimentacao()}
                     <h3>Vira</h3>
-                    {/* <img src="https://deckofcardsapi.com/static/img/QH.png" alt="Cartas Truco" style={styles.cartaVerso} /> */}
                     {maoAtual.vira == null ? '' : <img src={maoAtual.vira.image} alt="Cartas Truco" style={styles.cartaVerso} />}
 
                 </div>
@@ -308,14 +295,12 @@ export default function Sala() {
                     
                 </div>
 
-                {/* testando rodada encerrada */}
                 <div style={styles.botaoContainer}>
                     {rodadaEncerrada && (
                         <button style={styles.buttonEncerrarRodada} onClick={() => getSocket().emit("encerrar-rodada", { equipeVencedoraId: equipeVencedoraId })}>Encerrar rodada</button>
                     )}
                 </div>
 
-                {/* testando mao encerrada */}
                 <div style={styles.botaoContainer}>
                     {maoEncerrada && (
                         <button style={styles.buttonEncerrarMao} onClick={() => getSocket().emit("encerrar-mao", { equipeVencedoraId: equipeVencedoraId })}>Nova mão</button>

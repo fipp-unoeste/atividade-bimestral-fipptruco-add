@@ -46,7 +46,6 @@ export const obterCartas = async () => {
     return obterCartasNiveladas(cartas.cards, cartas.cards[0]);
 }
 
-
 export const obterMovimencacaoVencedora = (movimentacoes) => {
     const movimentacoesJogadas = movimentacoes.filter((m) => m.tipo == 'jogada');
 
