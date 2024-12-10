@@ -28,6 +28,7 @@ export default function Sala() {
     const [nomeTrucador, setNomeTrucador] = useState('');
     const [botaoIniciarJogo, setBotaoIniciarJogo] = useState(false);
     const [botaoTrucar, setBotaoTrucar] = useState(false);
+    const [jogadorAtual, setJogadorAtual] = useState({});
 
     const posicoesEquipe1 = [
         { top: '20%', left: '50%' },
@@ -65,7 +66,9 @@ export default function Sala() {
     useSocketEvent('nova-mao', (command) => {
         console.log('Recebendo o evento nova-mao');
         setEventos((prev) => [...prev, `Nova mão iniciada`]);
+        setEventos((prev) => [...prev, `Vez do jogador ${command.jogadorAtual.nome}`]);
         setJogadores(Object.values(command.jogadores));
+        setJogadorAtual(command.jogadorAtual);
         setMaoAtual(command.mao);
         setMaoEncerrada(false);
         setBotaoIniciarJogo(false);
@@ -74,8 +77,10 @@ export default function Sala() {
 
     useSocketEvent('jogada', (command) => {
         console.log('Recebendo o evento jogada');
+        setEventos((prev) => [...prev, `Vez do jogador ${command.jogadorAtual.nome}`]);
         setMaoAtual(command.mao);
         setJogadores(Object.values(command.jogadores));
+        setJogadorAtual(command.jogadorAtual);
         setRodadaEncerrada(command.rodadaEncerrada);
         setEquipeVencedoraId(command.equipeVencedoraId);
         if(command.rodadaEncerrada) {
@@ -86,6 +91,7 @@ export default function Sala() {
     useSocketEvent('rodada-encerrada', (command) => {
         console.log('Recebendo o evento rodada-encerrada');
         setEventos((prev) => [...prev, `Rodada encerrada`]);
+        setEventos((prev) => [...prev, `Vez do jogador ${command.jogadorAtual.nome}`]);
         setMaoAtual(command.mao);
         setMaoEncerrada(command.maoEncerrada);
         setRodadaEncerrada(false);
@@ -157,6 +163,16 @@ export default function Sala() {
         router.push('/salas');
     }
 
+    function jogarCarta(carta) {
+        if (jogadorAtual.id != idJogador) {
+            alert('Ainda não é sua vez!');
+            return;
+        }
+
+        const socket = getSocket();
+        socket.emit('jogada', { carta });
+    }
+
     function renderizarCartas(jogador) {
         const temCartas = Object.keys(maoAtual).length > 0;
         const renderizarCartasFrente = jogador.id == idJogador;
@@ -170,7 +186,7 @@ export default function Sala() {
                                 src={carta.image} 
                                 alt="Cartas Truco" 
                                 style={styles.cartas}
-                                onClick={() => getSocket().emit('jogada', { carta })} 
+                                onClick={() => jogarCarta(carta)}
                             />
                         ))}
                     </div>  
@@ -217,6 +233,10 @@ export default function Sala() {
     }
 
     function pedirTruco() {
+        if (jogadorAtual.id != idJogador) {
+            alert('Ainda não é sua vez!');
+            return;
+        }
         const socket = getSocket();
         socket.emit('trucar');
     }
@@ -600,9 +620,10 @@ const styles = {
         transform: 'translateX(-50%)'
     },
     cartas: {
-        width: '50px',
-        height: '80px', 
-        borderRadius: '8px'
+        width: '65px',
+        height: '95px', 
+        borderRadius: '8px',
+        cursor: 'pointer',
     },
     //pontuacao
     pontuacao: {

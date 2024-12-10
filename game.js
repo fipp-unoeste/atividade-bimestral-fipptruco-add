@@ -1,5 +1,5 @@
 import ParticipanteRepository from "./repositories/participanteRepository.js";
-import { obterCartas, obterMovimencacaoVencedora, obterTotalPontosPorEquipe, distribuirCartasParaJogadores } from "./utils/baralhoUtils.js";
+import { obterCartas, obterMovimencacaoVencedora, obterTotalPontosPorEquipe, distribuirCartasParaJogadores, calcularOrdemDeTurnos, alternarJogadorAtual } from "./utils/baralhoUtils.js";
 import MaoRepository from "./repositories/maoRepository.js";
 import JogoRepository from "./repositories/jogoRepository.js";
 import CartaRepository from "./repositories/cartaRepository.js";
@@ -11,7 +11,10 @@ export default class Game {
     
     state = {
         jogadores: {},
-        maos: []
+        maos: [],
+        maoAtual: {},
+        jogadorAtual: {},
+        ordemTurnos: [],
     };
 
     observers = [];
@@ -83,11 +86,14 @@ export default class Game {
 
         this.state.jogadores = jogadoresComCartas;
         this.state.maoAtual = {...mao, rodadas: [], movimentacoes: []};
+        this.state.ordemTurnos = calcularOrdemDeTurnos(Object.values(this.state.jogadores));
+        this.state.jogadorAtual = this.state.ordemTurnos[0];
 
         this.notifyAll({
             type: 'nova-mao',
             jogadores: this.state.jogadores,
-            mao
+            mao,
+            jogadorAtual: this.state.jogadorAtual
         })
     }
 
@@ -114,12 +120,16 @@ export default class Game {
             rodadaEncerrada = true;
         }
 
+        const jogadorAtual = alternarJogadorAtual(this.state.jogadorAtual, this.state.ordemTurnos);
+        this.state.jogadorAtual = jogadorAtual;
+
         this.notifyAll({
             type: 'jogada',
             mao: this.state.maoAtual,
             jogadores: this.state.jogadores,
             equipeVencedoraId,
-            rodadaEncerrada
+            rodadaEncerrada,
+            jogadorAtual
         });
     }
 
@@ -145,7 +155,8 @@ export default class Game {
             type: 'rodada-encerrada',
             mao: this.state.maoAtual,
             equipeVencedoraId,
-            maoEncerrada
+            maoEncerrada,
+            jogadorAtual: this.state.jogadorAtual
         });
     }
 

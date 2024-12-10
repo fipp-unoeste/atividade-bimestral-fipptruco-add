@@ -76,3 +76,24 @@ export const distribuirCartasParaJogadores = (cartas, jogadores) => {
 
     return jogadoresAtualizados;
 }
+
+export const calcularOrdemDeTurnos = (jogadores) => {
+    const jogadoresEquipe1 = jogadores.filter((jogador) => jogador.eqp_id == 1);
+    const jogadoresEquipe2 = jogadores.filter((jogador) => jogador.eqp_id == 2);
+
+    // Combine os jogadores alternando entre as equipes
+    const ordemTurnos = [];
+    for (let i = 0; i < Math.max(jogadoresEquipe1.length, jogadoresEquipe2.length); i++) {
+        if (jogadoresEquipe1[i]) ordemTurnos.push(jogadoresEquipe1[i]);
+        if (jogadoresEquipe2[i]) ordemTurnos.push(jogadoresEquipe2[i]);
+    }
+
+    return ordemTurnos;
+}
+
+export const alternarJogadorAtual = (jogadorAtual, ordemTurnos) => {
+    const indiceAtual = ordemTurnos.indexOf(jogadorAtual);
+    const proximoIndice = (indiceAtual + 1) % ordemTurnos.length;
+
+    return ordemTurnos[proximoIndice];
+}
