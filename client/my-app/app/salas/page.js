@@ -1,31 +1,175 @@
 'use client'
 
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Salas from '../components/salas';
+import UserContext from '../context/userContext'; // Ajuste o caminho para o contexto
+import { useRouter } from 'next/navigation';
+
 
 export default function Sala() {
 
-    return (
-        <div style={styles.container}>
-            <h1 style={styles.title}>Salas de Truco Disponíveis</h1>
-            <span>Escolha uma sala ou crie e jogue</span>
+    const router = useRouter();
+    const { user, logout } = useContext(UserContext);
+    const [dropdownVisible, setDropdownVisible] = useState(false);
+    const [userName, setUserName] = useState('Sem nome');
 
-            <Salas />
-            
-            {/* <p style={styles.description}>
-                Jogue truco com amigos e desafie outros jogadores online! Prepare-se para muita diversão e emoção com o nosso jogo de truco online.
-            </p>
-            <div style={styles.buttonsContainer}>
-                <Link href="/" style={styles.button}>
-                    Jogar
-                </Link>
-            </div> */}
+    useEffect(() => {
+        if (user && user.nome) {
+            setUserName(user.nome);
+        }
+    }, [user]);
+
+    const handleLogout = () => {
+        logout();
+        router.push('/login');
+    };
+
+    return (
+
+        <div style={styles.pageContainer}>
+            <nav style={styles.nav}>
+                <div style={styles.logoContainer}>
+                    <a href="/">
+                        <img src="./logotruco.png" alt="Logo Truco Online" style={styles.logo} />
+                    </a>
+                </div>
+                {/* <div style={styles.navLinks}>
+                    <Link href="/login" style={styles.navButton}>Login</Link>
+                    <Link href="/cadastro" style={styles.navButton}>Cadastro</Link>
+                    <Link href="/salas" style={styles.navButton}>Ver Salas</Link>
+                </div> */}
+                <div style={styles.navUser}>
+                    
+                    
+                    {user && user.nome && (
+                        <div style={styles.profileContainer} onClick={() => setDropdownVisible(!dropdownVisible)}>
+                            <img src="./usuario.png" alt="Profile" style={styles.profileImage} />
+                            <span style={styles.profileName}>{userName}</span>
+                            <div style={dropdownVisible ? styles.dropdownMenuActive : styles.dropdownMenu}>
+                                <a className="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal" onClick={handleLogout}>
+                                    <i className="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400" ></i>
+                                    Logout
+                                </a>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </nav>
+
+        <div style={styles.container}>
+        <h1 style={styles.title}>Salas de Truco Disponíveis</h1>
+        <span>Escolha uma sala ou crie e jogue</span>
+
+        <Salas />
+        
+        {/* <p style={styles.description}>
+            Jogue truco com amigos e desafie outros jogadores online! Prepare-se para muita diversão e emoção com o nosso jogo de truco online.
+        </p>
+        <div style={styles.buttonsContainer}>
+            <Link href="/" style={styles.button}>
+                Jogar
+            </Link>
+        </div> */}
+            </div>
         </div>
+
+
+        
     )
 }
 
 const styles = {
+
+    //nav
+    pageContainer: {
+        fontFamily: 'Arial, sans-serif',
+    },
+    nav: {
+        // display: 'flex',
+        // justifyContent: 'space-between',
+        // alignItems: 'center',
+        // padding: '20px',
+        // // backgroundColor: '#ecac44', 
+        // backgroundColor: '#4f0405',
+        // color: '#fff',
+
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '20px',
+        background: 'radial-gradient(circle, #4f0405, #2e0203 70%)', // Gradiente radial
+        color: '#fff',
+    },
+    logoContainer: {
+        flex: 1,
+    },
+    logo: {
+        width: '100px',
+        height: 'auto',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#4f0405', // Mesma cor do fundo do seu `nav`
+        border: 'none',
+    },
+    
+    navUser: {
+        flex: '1',
+        display: 'flex',
+        justifyContent: 'flex-end', 
+        gap: '15px',
+        alignItems: 'center',
+    },
+    // navButton: {
+    //     color: 'black',
+    //     textDecoration: 'none',
+    //     fontSize: '1.2rem',
+    //     padding: '10px',
+    //     backgroundColor: '#555555 ',
+    //     borderRadius: '5px',
+    //     transition: 'background-color 0.3s',
+    //     margin: '10px',
+    // },
+
+    
+    
+    
+    profileContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        cursor: 'pointer',
+        position: 'relative',
+    },
+    profileImage: {
+        width: '50px',  
+        height: '50px',
+        borderRadius: '50%',  
+    },
+    profileName: {
+        marginTop: '10px',
+        color: '#fff',
+        fontSize: '1rem',
+    },
+    dropdownMenu: {
+        display: 'none',
+        position: 'absolute',
+        top: '100%',
+        right: '0',
+        backgroundColor: '#ffffff',
+        boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.2)',
+        zIndex: '1',
+    },
+    dropdownMenuActive: {
+        display: 'block',
+    },
+
+
+
+
+
+    //salas
     container: {
         display: 'flex',
         flexDirection: 'column',
@@ -49,7 +193,7 @@ const styles = {
         WebkitTextStroke: '2px #ffffff',
         fontWeight: 'bold',
         textTransform: 'uppercase',
-        marginTop: '150px',
+        marginTop: '30px',
         
     },
     description: {

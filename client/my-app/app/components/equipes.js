@@ -71,7 +71,7 @@ export default function Equipes() {
                                 cursor: 'pointer',
                                 transition: 'all 0.3s ease',
                                 textAlign: 'center',}} onClick={() => entrar(1)}>
-                                    Entrar pela Equipe 1
+                                    Equipe 1
                             </button>
                         )}
                         
@@ -87,7 +87,7 @@ export default function Equipes() {
                                 cursor: 'pointer',
                                 transition: 'all 0.3s ease',
                                 textAlign: 'center',}} onClick={() => entrar(2)}>
-                                    Entrar pela Equipe 2
+                                    Equipe 2
                             </button>
                         )}
 
