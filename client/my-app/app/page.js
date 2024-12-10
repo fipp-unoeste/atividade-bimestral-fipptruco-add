@@ -3,10 +3,11 @@
 import Link from 'next/link';
 import { useContext, useState, useEffect } from "react";
 import UserContext from './context/userContext';
+import { useRouter } from 'next/navigation'; 
 
 export default function Home({children}) {
-
-    const {user} = useContext(UserContext);
+    const router = useRouter();
+    const {user, logout} = useContext(UserContext);
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const [userName, setUserName] = useState('Sem nome');
 
@@ -15,6 +16,11 @@ export default function Home({children}) {
             setUserName(user.nome); // atualiza após a hidratação
         }
     }, [user]);
+
+    const handleLogout = () => {
+        logout(); // Limpa o estado e o localStorage
+        router.push('/login'); // Redireciona para a página de login
+    };
 
     return (
         <div style={styles.pageContainer}>
@@ -35,8 +41,8 @@ export default function Home({children}) {
                             <img src="./usuario.png" alt="Profile" style={styles.profileImage} />
                             <span style={styles.profileName}>{userName}</span>
                             <div style={dropdownVisible ? styles.dropdownMenuActive : styles.dropdownMenu}>
-                                <a className="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                                    <i className="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                <a className="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal" onClick={handleLogout}>
+                                    <i className="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400" ></i>
                                     Logout
                                 </a>
                             </div>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useContext, useState } from 'react';
+import { useContext, useState , useEffect} from 'react';
 import { useRouter } from 'next/navigation';
 import UserContext from '../context/userContext';
 
@@ -8,7 +8,13 @@ export default function Login() {
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
     const router = useRouter();
-    const {setUser} = useContext(UserContext);
+    const {user,setUser} = useContext(UserContext);
+
+    useEffect(() => {
+        if (user) {
+            router.push('/salas'); // Usuário já autenticado
+        }
+    }, [user, router]);
 
     const BuscarUsuario = async (usuario) => {
         try {
