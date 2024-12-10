@@ -31,7 +31,7 @@ export default function Home({children}) {
                 <div style={styles.navLinks}>
                     <Link href="/login" style={styles.navButton}>Login</Link>
                     <Link href="/cadastro" style={styles.navButton}>Cadastro</Link>
-                    <Link href="/salas" style={styles.navButton}>Ver Salas</Link>
+                    <Link href="/salas" style={styles.navButton}>Salas</Link>
                 </div>
                 <div style={styles.navUser}>
                     
