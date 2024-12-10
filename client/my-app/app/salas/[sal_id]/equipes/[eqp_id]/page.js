@@ -33,8 +33,8 @@ export default function Sala() {
     ];
     
     const posicoesEquipe2 = [
-        { top: '50%', left: '3%' },
-        { top: '50%', right: '0%' },
+        { top: '50%', left: '4%' },
+        { top: '50%', right: '4%' },
     ];
 
     useSocketEvent('setup', (command) => {
@@ -310,39 +310,55 @@ export default function Sala() {
             <button style={styles.buttonSair} className="button-sair" onClick={sair}>Sair do Jogo</button>
 
             {jogoEncerrado && (
-                <div style={styles.quadroVencedor} id="quadroVencedor">
-                    <div>
-                        <h2>Equipe {equipeVencedoraId} venceu</h2>
-                        <button style={styles.botaoVoltar} onClick={sair}>
-                            Voltar para Salas
-                        </button>
+                <div style={styles.overlay}>   
+                    <div style={styles.quadroVencedor}>
+                        <div>
+                            <h2>Equipe {equipeVencedoraId} venceu</h2>
+                            <button style={styles.botaoVoltar} onClick={sair}>
+                                Voltar para Salas
+                            </button>
+                        </div>
                     </div>
-                </div>
+                </div> 
             )}      
 
             {desconectarTodos && (
-                <div style={styles.quadroVencedor} id="quadroVencedor">
-                    <div>
-                        <h2>Um jogador desconectou no meio da partida</h2>
-                        <button style={styles.botaoVoltar} onClick={sair}>
-                            Voltar para Salas
-                        </button>
+                <div style={styles.overlay}>  
+                    <div style={styles.quadroVencedor}>
+                        <div>
+                            <h2>Um jogador desconectou no meio da partida</h2>
+                            <button style={styles.botaoVoltar} onClick={sair}>
+                                Voltar para Salas
+                            </button>
+                        </div>
                     </div>
-                </div>
+                </div>  
             )}   
 
             {equipeTrucadoraId && equipeTrucadoraId != eqp_id && (
-                <div style={styles.quadroVencedor} id="quadroVencedor">
-                    <div>
-                        <h2>{nomeTrucador} da equipe {equipeTrucadoraId} pediu truco</h2>
-                        <button style={styles.botaoVoltar} onClick={() => getSocket().emit("aceitar-truco") }>
-                            Aceitar
-                        </button>
-                        <button style={styles.botaoVoltar} onClick={() => getSocket().emit("correr-truco") }>
-                            Correr
-                        </button>
-                    </div>
-                </div>  
+                <div style={styles.overlay}> 
+                    <div style={styles.quadroVencedor}>
+                        <div>
+                            <h2>{nomeTrucador} da equipe {equipeTrucadoraId} pediu truco</h2>
+                            <button style={styles.botaoVoltar} onClick={() => getSocket().emit("aceitar-truco") }>
+                                Aceitar
+                            </button>
+                            <button style={styles.botaoVoltar} onClick={() => getSocket().emit("correr-truco") }>
+                                Correr
+                            </button>
+                        </div>
+                    </div> 
+                </div>
+            )}
+
+            {equipeTrucadoraId && equipeTrucadoraId == eqp_id && (
+                <div style={styles.overlay}> 
+                    <div style={styles.quadroVencedor}>
+                        <div>
+                            <h2>Aguardando a outra equipe aceitar ou correr do truco...</h2>
+                        </div>
+                    </div> 
+                </div>
             )}
 
         </div>
@@ -573,38 +589,6 @@ const styles = {
         margin: '10px 0',
     },
 
-    //vencedor
-    quadroVencedor: {
-        position: 'fixed',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: '300px',
-        padding: '20px',
-        backgroundColor: '#ffffff',
-        borderRadius: '10px',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-        textAlign: 'center',
-        zIndex: 1000,
-        visibility: 'visible', //'hidden', // Inicialmente escondido
-        //visibility: 'hidden', // Inicialmente escondido
-        //opacity: 0, // Para animar a transição de entrada coloque 
-        opacity: 1, // Para animar a transição de entrada coloque 
-        transition: 'opacity 0.5s ease, visibility 0.5s ease',
-    },
-    botaoVoltar: {
-        marginTop: '20px',
-        padding: '10px 15px',
-        backgroundColor: '#4CAF50',
-        color: '#ffffff',
-        border: 'none',
-        borderRadius: '5px',
-        cursor: 'pointer',
-        fontSize: '16px',
-        transition: 'background-color 0.3s',
-        margin:'10px',
-    },
-
     botaoCorrer: {
         marginTop: '20px',
         padding: '10px 15px',
@@ -617,9 +601,42 @@ const styles = {
         transition: 'background-color 0.3s',
         margin:'10px',
     },
-    botaoVoltarHover: {
-        backgroundColor: '#45a049',
+
+    //vencedor, pediuTruco, jogador saiu da sala
+    overlay: {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Cor preta com transparência
+        zIndex: 999, // Um nível abaixo do pop-up
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-   
-    
+    quadroVencedor: {
+        position: 'relative',
+        width: '300px',
+        padding: '20px',
+        backgroundColor: '#ffffff',
+        borderRadius: '10px',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+        textAlign: 'center',
+        zIndex: 1000, // Acima do overlay
+        opacity: 1, // Para animação
+        transition: 'opacity 0.5s ease',
+    },
+    botaoVoltar: {
+        marginTop: '20px',
+        padding: '10px 15px',
+        backgroundColor: '#4CAF50',
+        color: '#ffffff',
+        border: 'none',
+        borderRadius: '5px',
+        cursor: 'pointer',
+        fontSize: '16px',
+        transition: 'background-color 0.3s',
+        margin: '10px',
+    },
 };
