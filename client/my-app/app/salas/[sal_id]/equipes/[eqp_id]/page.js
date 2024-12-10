@@ -13,6 +13,7 @@ export default function Sala() {
     const [eventos, setEventos] = useState([]);
     const [nomeJogador, setNomeJogador] = useState(''); 
     const [idJogador, setIdJogador] = useState(''); 
+    const [idEquipe, setIdEquipe] = useState(''); 
     const [jogadores, setJogadores] = useState([]);
     const [maos, setMaos] = useState([]);
     const [maoAtual, setMaoAtual] = useState({});
@@ -21,6 +22,10 @@ export default function Sala() {
     const [maoEncerrada, setMaoEncerrada] = useState(false);
     const [pontosEquipe1, setPontosEquipe1] = useState(0);
     const [pontosEquipe2, setPontosEquipe2] = useState(0);
+    const [desconectarTodos, setDesconectarTodos] = useState(false);
+    const [jogoEncerrado, setJogoEncerrado] = useState(false);
+    const [equipeTrucadoraId, setEquipeTrucadoraId] = useState('');
+    const [nomeTrucador, setNomeTrucador] = useState('');
 
     const posicoesEquipe1 = [
         { top: '20%', left: '50%' },
@@ -39,7 +44,7 @@ export default function Sala() {
 
     useSocketEvent('add-player', (command) => {
         console.log('Recebendo o evento add-player');
-        setEventos((prev) => [...prev, `${command.jogador.nome} entrou na sala`]);
+        setEventos((prev) => [...prev, `${command.jogador.nome} entrou na sala pela equipe ${eqp_id}`]);
         setJogadores((prev) => [...prev, command.jogador]);
     });
 
@@ -47,6 +52,9 @@ export default function Sala() {
         console.log('Recebendo o evento player-disconnected');
         setEventos((prev) => [...prev, `${command.jogador.nome} saiu da sala`]);
         setJogadores((prev) => prev.filter((jogador) => jogador.id !== command.jogador.id));
+        if (maoAtual) {
+            setDesconectarTodos(true);
+        }
     });
 
     useSocketEvent('nova-mao', (command) => {
@@ -89,9 +97,44 @@ export default function Sala() {
 
     useSocketEvent('jogo-encerrado', (command) => {
         console.log('Recebendo o evento jogo encerrado');
-
+        setJogoEncerrado(true);
+        setMaoEncerrada(false);
+        setRodadaEncerrada(false);
         setEventos((prev) => [...prev,'Jogo Encerrado']);
         setEventos((prev) => [...prev,'Equipe vencedora do Jogo: '+ command.equipeVencedoraId]);
+    });
+
+    useSocketEvent('pediu-truco', (command) => {
+        console.log('Recebendo o evento pediu truco');
+        setEquipeTrucadoraId(command.jogador.eqp_id);
+        setNomeTrucador(command.jogador.nome);
+        setEventos((prev) => [...prev, `${command.jogador.nome} da equipe ${command.jogador.eqp_id} pediu truco`]);
+    });
+
+    useSocketEvent('aceitou-truco', (command) => {
+        console.log('Recebendo o evento aceitou truco');
+        setMaoAtual(command.mao);
+        setEquipeTrucadoraId('');
+        setNomeTrucador('');
+        setEventos((prev) => [...prev, `${command.jogador.nome} da equipe ${command.jogador.eqp_id} aceitou o truco`]);
+    });
+
+    useSocketEvent('correu', (command) => {
+        console.log('Recebendo o enveto correu');
+        setEquipeTrucadoraId('');
+        setNomeTrucador('');
+        
+        setMaoEncerrada(true);
+        setEquipeVencedoraId(command.equipeVencedoraId);
+
+        if (command.equipeVencedoraId == 1) {
+            setPontosEquipe1((prev) => prev + command.mao.valor );
+        } else {
+            setPontosEquipe2((prev) => prev + command.mao.valor );
+        }
+        
+        setEventos((prev) => [...prev, `${command.jogador.nome} da equipe ${command.jogador.eqp_id} correu`]);
+        setEventos((prev) => [...prev,'Equipe vencedora da Mão: '+ command.equipeVencedoraId]);
     });
 
 
@@ -226,8 +269,10 @@ export default function Sala() {
                     <h3>Vira</h3>
                     {/* <img src="https://deckofcardsapi.com/static/img/QH.png" alt="Cartas Truco" style={styles.cartaVerso} /> */}
                     {maoAtual.vira == null ? '' : <img src={maoAtual.vira.image} alt="Cartas Truco" style={styles.cartaVerso} />}
+
                 </div>
             </div>
+
             <div style={styles.pontuacao}>
                 <h3 style={styles.tituloPontuacao}>Pontuação</h3>
                 <div style={styles.equipe}>
@@ -254,7 +299,7 @@ export default function Sala() {
                 <br />
 
                 <div style={styles.botaoContainer}>
-                    <button style={styles.buttonTruco} onClick={() => getSocket().emit("teste", { codSala: sal_id })}>Pedir truco</button>
+                    <button style={styles.buttonTruco} onClick={() => getSocket().emit("trucar")}>Pedir truco</button>
                 </div>
                 <div style={styles.botaoContainer}>
                     {jogadores.length == 4 && (
@@ -279,17 +324,41 @@ export default function Sala() {
             </div>
             <button style={styles.buttonSair} className="button-sair" onClick={sair}>Sair do Jogo</button>
 
-            {/* testando msg de vencedor */}
-            <div style={styles.quadroVencedor} id="quadroVencedor">
-                {equipeVencedoraId && (
+            {jogoEncerrado && (
+                <div style={styles.quadroVencedor} id="quadroVencedor">
                     <div>
                         <h2>Equipe {equipeVencedoraId} venceu</h2>
-                        <button style={styles.botaoVoltar} onClick={() => voltarParaSalas()}>
+                        <button style={styles.botaoVoltar} onClick={sair}>
                             Voltar para Salas
                         </button>
                     </div>
-                )}
-            </div>
+                </div>
+            )}      
+
+            {desconectarTodos && (
+                <div style={styles.quadroVencedor} id="quadroVencedor">
+                    <div>
+                        <h2>Um jogador desconectou no meio da partida</h2>
+                        <button style={styles.botaoVoltar} onClick={sair}>
+                            Voltar para Salas
+                        </button>
+                    </div>
+                </div>
+            )}   
+
+            {equipeTrucadoraId && equipeTrucadoraId != eqp_id && (
+                <div style={styles.quadroVencedor} id="quadroVencedor">
+                    <div>
+                        <h2>{nomeTrucador} da equipe {equipeTrucadoraId} pediu truco</h2>
+                        <button style={styles.botaoVoltar} onClick={() => getSocket().emit("aceitar-truco") }>
+                            Aceitar
+                        </button>
+                        <button style={styles.botaoVoltar} onClick={() => getSocket().emit("correr-truco") }>
+                            Correr
+                        </button>
+                    </div>
+                </div>  
+            )}
 
         </div>
     );
@@ -532,10 +601,10 @@ const styles = {
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
         textAlign: 'center',
         zIndex: 1000,
-        //visibility: 'visible', //'hidden', // Inicialmente escondido
-        visibility: 'hidden', // Inicialmente escondido
-        opacity: 0, // Para animar a transição de entrada coloque 
-        //opacity: 1, // Para animar a transição de entrada coloque 
+        visibility: 'visible', //'hidden', // Inicialmente escondido
+        //visibility: 'hidden', // Inicialmente escondido
+        //opacity: 0, // Para animar a transição de entrada coloque 
+        opacity: 1, // Para animar a transição de entrada coloque 
         transition: 'opacity 0.5s ease, visibility 0.5s ease',
     },
     botaoVoltar: {
@@ -548,6 +617,20 @@ const styles = {
         cursor: 'pointer',
         fontSize: '16px',
         transition: 'background-color 0.3s',
+        margin:'10px',
+    },
+
+    botaoCorrer: {
+        marginTop: '20px',
+        padding: '10px 15px',
+        backgroundColor: 'red',
+        color: '#ffffff',
+        border: 'none',
+        borderRadius: '5px',
+        cursor: 'pointer',
+        fontSize: '16px',
+        transition: 'background-color 0.3s',
+        margin:'10px',
     },
     botaoVoltarHover: {
         backgroundColor: '#45a049',

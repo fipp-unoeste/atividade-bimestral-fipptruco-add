@@ -46,7 +46,21 @@ export default async function socket(socketList) {
       console.log(game.state);
     });
 
+    socket.on('trucar', ()  => {    
+      game.Trucar({ socketId: socket.id });
+      console.log(game.state);
+    });
+
+    socket.on('aceitar-truco', ()  => {    
+      game.AceitarTruco({ socketId: socket.id });
+      console.log(game.state);
+    });
+
+    socket.on('correr-truco', ()  => {    
+      game.CorrerDoTruco({ socketId: socket.id });
+      console.log(game.state);
+    });
 
   });
-  
+
 }

@@ -169,7 +169,7 @@ export default class Game {
         });
     }
 
-    trucar(command) {
+    Trucar(command) {
         const { socketId } = command;
         
         this.state.maoAtual.movimentacoes.push({
@@ -184,11 +184,11 @@ export default class Game {
         });
     }
 
-    aceitarTruco(command) {
+    AceitarTruco(command) {
         const { socketId } = command;
         
         this.state.maoAtual.trucada = 'S';
-        this.state.valor = 3;
+        this.state.maoAtual.valor = 3;
         this.state.maoAtual.movimentacoes.push({
             id: Math.floor(Math.random() * 1000000),
             tipo: 'aceitou-truco',
@@ -197,28 +197,29 @@ export default class Game {
 
         this.notifyAll({
             type: 'aceitou-truco',
-            jogador: this.state.jogadores[socketId]
+            jogador: this.state.jogadores[socketId],
+            mao: this.state.maoAtual
         });
     }
 
-    correrDoTruco(command) {
+    CorrerDoTruco(command) {
         const { socketId } = command;
-        
+        const jogador = this.state.jogadores[socketId];
+
         const movimentacao = {
             id: Math.floor(Math.random() * 1000000),
             tipo: 'correu',
-            jogador: this.state.jogadores[socketId]
+            jogador
         };
         this.state.maoAtual.movimentacoes.push(movimentacao);
 
-        const equipeVencedoraId = this.state.jogadores[socketId].eqp_id == 1 ? 2 : 1;
+        const equipeVencedoraId = jogador.eqp_id == 1 ? 2 : 1;
 
         this.notifyAll({
             type: 'correu',
             mao: this.state.maoAtual,
-            jogadores: this.state.jogadores,
+            jogador,
             equipeVencedoraId: equipeVencedoraId,
-            rodadaEncerrada: true
         });
     }
 }
