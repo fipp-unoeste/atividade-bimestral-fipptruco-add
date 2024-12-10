@@ -21,7 +21,20 @@ export const UserProvider = ({children}) => {
     
     const [user, setUser] = useState(usuario);
 
-    return <UserContext.Provider value={{user, setUser}}>
+    const logout = () => {
+        setUser(null);
+        localStorage.removeItem('usuario'); // Remove o usuário salvo
+
+         // Remove todos os cookies configurados
+         document.cookie.split(";").forEach((cookie) => {
+            const [name] = cookie.split("=");
+            document.cookie = `${name.trim()}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
+        });
+
+        console.log("Cookies e usuário removidos!");
+    };
+
+    return <UserContext.Provider value={{user, setUser, logout}}>
                 {children}
             </UserContext.Provider>
 }

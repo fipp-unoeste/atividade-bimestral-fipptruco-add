@@ -297,9 +297,11 @@ export default function Sala() {
                     <h2 style={styles.menuLateralTitle}>Jogadores na Sala</h2>
                 </div>
                 <br />
-                {eventos.map((evento, index) => (
-                    <p key={index}>{evento}</p>
-                ))}
+               
+                    {eventos.map((evento, index) => (
+                        <p key={index}>{evento}</p>))}
+                
+                
 
                 <br />
                 <br />
@@ -443,16 +445,22 @@ const styles = {
     },
 
     menuLateral: {
-        width: '260px', 
-        backgroundColor: '#808080', 
-        padding: '20px',
-        overflowY: 'auto',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        backgroundColor: 'black',
+        color: '#fff',
+        padding: '10px',
+        width: '260px',
+        borderRadius: '8px',
+        boxShadow: '2px 2px 8px rgba(0,0,0,0.5)',
+        height: '100%', 
+        overflow: 'auto',
     },
 
     menuLateralTitle: {
-        color: '#000',
+        color: '#ffd700',
         margin: '10px 0 10px',
-        backgroundColor: '#808080',
     },
     buttonApertar: {
         display: 'block',
@@ -469,8 +477,8 @@ const styles = {
     buttonSair: {
         position: 'fixed',
         bottom: '20px',
-        right: '20px', 
-        padding: '10px 20px',
+        right: '11px', 
+        padding: '10px',
         color: '#fff',
         backgroundColor: '#FF0000',
         borderRadius: '5px',
@@ -479,11 +487,24 @@ const styles = {
         border: 'none',
         fontSize: '16px',
     },  
+    buttonTruco: { 
+        color: '#fff',
+        backgroundColor: '#4682B4',
+        position: 'fixed',
+        bottom: '20px',
+        right: '138px', 
+        padding: '10px 20px',
+        borderRadius: '5px',
+        cursor: 'pointer',
+        textAlign: 'center',
+        border: 'none',
+        fontSize: '16px',
+    },
     botaoContainer: {
         display: 'flex', 
         justifyContent: 'center', 
         gap: '10px', 
-        marginBottom: '20px', 
+        marginBottom: '20px',
     },
 
     buttonEquipe1: {
@@ -507,18 +528,9 @@ const styles = {
         border: 'none',
         fontSize: '16px',
     }, 
-    buttonTruco: { 
-        padding: '10px 20px',
-        color: '#fff',
-        backgroundColor: '#4682B4',
-        borderRadius: '5px',
-        cursor: 'pointer',
-        textAlign: 'center',
-        border: 'none',
-        fontSize: '16px',
-    },
+   
     buttonEncerrarRodada: { 
-        padding: '10px 20px',
+        padding: '10px',
         color: '#fff',
         backgroundColor: '#f76b00',
         borderRadius: '5px',
@@ -526,6 +538,25 @@ const styles = {
         textAlign: 'center',
         border: 'none',
         fontSize: '16px',
+
+        position: 'fixed',
+        bottom: '65px',
+        right: '11px', 
+
+    },
+    buttonIniciarJogo: { 
+        padding: '10px',
+        color: '#fff',
+        backgroundColor: 'green',
+        borderRadius: '5px',
+        cursor: 'pointer',
+        textAlign: 'center',
+        border: 'none',
+        fontSize: '16px',
+
+        position: 'fixed',
+        bottom: '65px',
+        right: '154px', 
     },
     buttonEncerrarMao: { 
         padding: '10px 20px',
@@ -538,16 +569,6 @@ const styles = {
         fontSize: '16px',
     },
     
-    buttonIniciarJogo: { 
-        padding: '10px 20px',
-        color: '#fff',
-        backgroundColor: 'green',
-        borderRadius: '5px',
-        cursor: 'pointer',
-        textAlign: 'center',
-        border: 'none',
-        fontSize: '16px',
-    },
     caixinhaMensagem: {
         position: 'fixed',
         top: '50%',
