@@ -101,7 +101,13 @@ export default function Salas() {
     }
 
     return (
-        <div style={{ margin: '20px' }}>
+        <div style={{  margin: '20px auto',
+                        width: '80%',
+                        maxWidth: '900px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center', }}>
             <div style={{ marginBottom: '20px' }}>
                 <label style={{ fontWeight: 'bold', fontSize: '16px', padding: '15px' }}>Nome da Sala:</label>
                 <input ref={sala} type="text" placeholder="Nome da Sala" style={{ padding: '10px', fontSize: '14px', width: '300px', marginRight: '10px', borderRadius: '4px' }} />
@@ -110,7 +116,10 @@ export default function Salas() {
                 </button>
             </div>
 
-            <table style={{ borderCollapse: 'collapse', width: '100%', borderRadius: '8px', overflow: 'hidden', height: 'auto' }}>
+            <table style={{ borderCollapse: 'collapse', 
+                            width: '100%', 
+                            tableLayout: 'fixed', // Garantir que as células não expandam além do necessário
+                            borderRadius: '8px', }}>
                 <thead>
                     {/* <tr>
                         <th colSpan="3" style={{ padding: '10px' }}>

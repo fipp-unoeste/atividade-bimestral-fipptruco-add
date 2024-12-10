@@ -8,7 +8,7 @@ export default class SalaRepository extends BaseRepository {
     }
 
     async listar() {
-        let sql = `select s.*, count(p.par_id) as qtde_participantes
+        let sql = `select s.*, count(distinct p.usu_id) as qtde_participantes
                     from tb_sala s
                     left join tb_participante p on p.sal_id = s.sal_id and p.par_dtsaida is null
                     group by s.sal_id, s.sal_nome, s.usu_id`;

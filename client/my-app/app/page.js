@@ -39,11 +39,11 @@ export default function Home({children}) {
                     {user && user.nome && (
                         <div style={styles.profileContainer} onClick={() => setDropdownVisible(!dropdownVisible)}>
                             <img src="./usuario.png" alt="Profile" style={styles.profileImage} />
-                            <span style={styles.profileName}>{userName}</span>
+                            <span style={styles.profileName}>{userName} <img src="./expandbutton.png" style={styles.expandbutton}></img></span>
                             <div style={dropdownVisible ? styles.dropdownMenuActive : styles.dropdownMenu}>
                                 <a className="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal" onClick={handleLogout}>
                                     <i className="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400" ></i>
-                                    Logout
+                                    Sair
                                 </a>
                             </div>
                         </div>
@@ -68,6 +68,10 @@ export default function Home({children}) {
 }
 
 const styles = {
+    expandbutton: {
+        width: '10px',
+
+    },
     pageContainer: {
         fontFamily: 'Arial, sans-serif',
     },
@@ -167,6 +171,10 @@ const styles = {
     },
     dropdownMenuActive: {
         display: 'block',
+        border: '2px solid yellow',
+        margin: '5px',
+        padding: '5px',
+        borderRadius: '5px',
     },
     container: {
         display: 'flex',
