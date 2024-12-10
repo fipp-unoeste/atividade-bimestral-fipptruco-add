@@ -444,7 +444,7 @@ const styles = {
     buttonSair: {
         position: 'fixed',
         bottom: '20px',
-        right: '25px', 
+        right: '11px', 
         padding: '10px',
         color: '#fff',
         backgroundColor: '#FF0000',
@@ -497,7 +497,7 @@ const styles = {
     }, 
    
     buttonEncerrarRodada: { 
-        padding: '10px 20px',
+        padding: '10px',
         color: '#fff',
         backgroundColor: '#f76b00',
         borderRadius: '5px',
@@ -507,9 +507,23 @@ const styles = {
         fontSize: '16px',
 
         position: 'fixed',
-        bottom: '80px',
-        right: '25px', 
+        bottom: '65px',
+        right: '11px', 
 
+    },
+    buttonIniciarJogo: { 
+        padding: '10px',
+        color: '#fff',
+        backgroundColor: 'green',
+        borderRadius: '5px',
+        cursor: 'pointer',
+        textAlign: 'center',
+        border: 'none',
+        fontSize: '16px',
+
+        position: 'fixed',
+        bottom: '65px',
+        right: '154px', 
     },
     buttonEncerrarMao: { 
         padding: '10px 20px',
@@ -522,20 +536,6 @@ const styles = {
         fontSize: '16px',
     },
     
-    buttonIniciarJogo: { 
-        padding: '10px 20px',
-        color: '#fff',
-        backgroundColor: 'green',
-        borderRadius: '5px',
-        cursor: 'pointer',
-        textAlign: 'center',
-        border: 'none',
-        fontSize: '16px',
-
-        position: 'fixed',
-        bottom: '65px',
-        right: '135px', 
-    },
     caixinhaMensagem: {
         position: 'fixed',
         top: '50%',
