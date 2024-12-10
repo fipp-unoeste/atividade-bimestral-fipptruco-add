@@ -52,7 +52,7 @@ export default function Home({children}) {
             </nav>
 
             <div style={styles.container}>
-                <h1 style={styles.title}>Truco Online</h1>
+                <h1 style={styles.title}>Truco</h1>
                 <p style={styles.description}>
                     Jogue truco com amigos e desafie outros jogadores online! 
                 </p>
