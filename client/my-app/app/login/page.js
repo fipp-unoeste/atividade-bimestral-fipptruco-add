@@ -13,6 +13,11 @@ export default function Login() {
     const BuscarUsuario = async (usuario) => {
         try {
 
+            if (!usuario.email || !usuario.senha) {
+                alert("Por favor, preencha email e senha!");
+                return;
+            }
+
             const response = await fetch('http://localhost:5000/usuarios/login', {
                 method: 'POST',
                 credentials: 'include',

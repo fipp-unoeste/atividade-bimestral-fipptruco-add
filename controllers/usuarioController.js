@@ -31,6 +31,11 @@ export default class UsuarioController {
     async buscarUsuario(req, res) {
         try{
             let {email, senha } = req.body;
+
+            if (!email || !senha) {
+                return res.status(400).json({ msg: "Email e senha são obrigatórios!" });
+            }
+            
             let repoUsuario = new UsuarioRepository();
             let usuario = await repoUsuario.validarAcesso(email,senha);
 
