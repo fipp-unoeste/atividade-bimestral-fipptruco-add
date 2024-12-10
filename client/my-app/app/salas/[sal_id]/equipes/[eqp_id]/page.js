@@ -422,7 +422,6 @@ const styles = {
         borderRadius: '8px',
         boxShadow: '2px 2px 8px rgba(0,0,0,0.5)',
         height: '100%', 
-        justifyContent: 'space-between',
         overflow: 'auto',
     },
 
@@ -506,6 +505,11 @@ const styles = {
         textAlign: 'center',
         border: 'none',
         fontSize: '16px',
+
+        position: 'fixed',
+        bottom: '80px',
+        right: '25px', 
+
     },
     buttonEncerrarMao: { 
         padding: '10px 20px',
@@ -527,6 +531,10 @@ const styles = {
         textAlign: 'center',
         border: 'none',
         fontSize: '16px',
+
+        position: 'fixed',
+        bottom: '65px',
+        right: '135px', 
     },
     caixinhaMensagem: {
         position: 'fixed',
