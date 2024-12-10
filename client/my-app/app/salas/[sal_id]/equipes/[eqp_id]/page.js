@@ -26,6 +26,8 @@ export default function Sala() {
     const [jogoEncerrado, setJogoEncerrado] = useState(false);
     const [equipeTrucadoraId, setEquipeTrucadoraId] = useState('');
     const [nomeTrucador, setNomeTrucador] = useState('');
+    const [botaoIniciarJogo, setBotaoIniciarJogo] = useState(false);
+    const [botaoTrucar, setBotaoTrucar] = useState(false);
 
     const posicoesEquipe1 = [
         { top: '20%', left: '50%' },
@@ -33,8 +35,8 @@ export default function Sala() {
     ];
     
     const posicoesEquipe2 = [
-        { top: '50%', left: '4%' },
-        { top: '50%', right: '4%' },
+        { top: '50%', left: '10%' },
+        { top: '50%', right: '10%' },
     ];
 
     useSocketEvent('setup', (command) => {
@@ -44,6 +46,9 @@ export default function Sala() {
 
     useSocketEvent('add-player', (command) => {
         console.log('Recebendo o evento add-player');
+        if (jogadores.length == 3)
+            setBotaoIniciarJogo(true);
+
         setEventos((prev) => [...prev, `${command.jogador.nome} entrou na sala pela equipe ${eqp_id}`]);
         setJogadores((prev) => [...prev, command.jogador]);
     });
@@ -63,6 +68,8 @@ export default function Sala() {
         setJogadores(Object.values(command.jogadores));
         setMaoAtual(command.mao);
         setMaoEncerrada(false);
+        setBotaoIniciarJogo(false);
+        setBotaoTrucar(true);
     });
 
     useSocketEvent('jogada', (command) => {
@@ -108,6 +115,7 @@ export default function Sala() {
         console.log('Recebendo o evento pediu truco');
         setEquipeTrucadoraId(command.jogador.eqp_id);
         setNomeTrucador(command.jogador.nome);
+        setBotaoTrucar(false);
         setEventos((prev) => [...prev, `${command.jogador.nome} da equipe ${command.jogador.eqp_id} pediu truco`]);
     });
 
@@ -201,6 +209,17 @@ export default function Sala() {
             </div>
         )
     }
+    
+    function iniciarJogo() {
+        const socket = getSocket();
+        socket.emit('nova-mao', {sal_id: sal_id });
+        setBotaoIniciarJogo(false);
+    }
+
+    function pedirTruco() {
+        const socket = getSocket();
+        socket.emit('trucar');
+    }
 
     useEffect(() => {
         const token = getCookie('token');
@@ -286,26 +305,40 @@ export default function Sala() {
                 <br />
 
                 <div style={styles.botaoContainer}>
-                    <button style={styles.buttonTruco} onClick={() => getSocket().emit("trucar")}>Pedir truco</button>
-                </div>
-                <div style={styles.botaoContainer}>
-                    {jogadores.length == 4 && (
-                        <button style={styles.buttonIniciarJogo} onClick={() => getSocket().emit("nova-mao", { sal_id: sal_id })}>Iniciar Jogo</button>
+                    {botaoTrucar && (
+                        <button style={styles.buttonTruco} onClick={pedirTruco}>Pedir truco</button>
                     )}
-                    
                 </div>
-
+                
+                <div style={styles.botaoContainer}>
+                    {botaoIniciarJogo && (
+                        <button style={styles.buttonIniciarJogo} onClick={iniciarJogo}>Iniciar Jogo</button>
+                    )}
+                </div>
+                
                 <div style={styles.botaoContainer}>
                     {rodadaEncerrada && (
-                        <button style={styles.buttonEncerrarRodada} onClick={() => getSocket().emit("encerrar-rodada", { equipeVencedoraId: equipeVencedoraId })}>Encerrar rodada</button>
+                        <div style={styles.overlay}>
+                            <div style={styles.quadroVencedor}>
+                                <h2>Clique para encerrar a rodada</h2>
+                                <button style={styles.buttonEncerrarRodada} onClick={() => getSocket().emit("encerrar-rodada", { equipeVencedoraId: equipeVencedoraId })}>Encerrar rodada</button>
+                            </div>
+                        </div>
                     )}
                 </div>
 
                 <div style={styles.botaoContainer}>
                     {maoEncerrada && (
-                        <button style={styles.buttonEncerrarMao} onClick={() => getSocket().emit("encerrar-mao", { equipeVencedoraId: equipeVencedoraId })}>Nova mão</button>
+                        <div style={styles.overlay}>
+                            <div style={styles.quadroVencedor}>
+                                <h2>Clique para iniciar nova mão</h2>
+                                <button style={styles.buttonEncerrarMao} onClick={() => getSocket().emit("encerrar-mao", { equipeVencedoraId: equipeVencedoraId })}>Nova mão</button>
+                            </div>
+                        </div>
                     )}
                 </div>
+                    
+                
             </div>
             <button style={styles.buttonSair} className="button-sair" onClick={sair}>Sair do Jogo</button>
 
