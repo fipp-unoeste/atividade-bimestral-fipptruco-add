@@ -153,7 +153,7 @@ export default class Game {
         this.state.maoAtual.equipeVencedoraId = command.equipeVencedoraId;
         this.state.maos.push(this.state.maoAtual);
         
-        const jogoEncerrado = obterTotalPontosPorEquipe(this.state.maos, this.state.maoAtual.equipeVencedoraId) >= 1;
+        const jogoEncerrado = obterTotalPontosPorEquipe(this.state.maos, this.state.maoAtual.equipeVencedoraId) >= 1;//mudar para 12
 
         if (jogoEncerrado) {
             this.notifyAll({
