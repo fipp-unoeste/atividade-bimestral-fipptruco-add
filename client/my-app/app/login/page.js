@@ -16,10 +16,10 @@ export default function Login() {
         }
     }, [user, router]);
 
-    // const validarEmail = (email) => {
-    //     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    //     return regex.test(email);
-    // };
+    const validarEmail = (email) => {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return regex.test(email);
+    };
 
     const BuscarUsuario = async (usuario) => {
         try {
@@ -29,10 +29,10 @@ export default function Login() {
                 return;
             }
 
-            // if (!validarEmail(usuario.email)) {
-            //     alert("Por favor, insira um email válido!");
-            //     return;
-            // }
+            if (!validarEmail(usuario.email)) {
+                alert("Por favor, insira um email válido!");
+                return;
+            }
 
             const response = await fetch('http://localhost:5000/usuarios/login', {
                 method: 'POST',

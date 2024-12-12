@@ -343,7 +343,7 @@ export default function Sala() {
                     <div style={styles.overlay}>
                         <div style={styles.quadroVencedor}>
                             <div> 
-                                <h2>Clique para encerrar a rodada</h2>
+                                <h2 style={styles.vencedor}>Clique para encerrar a rodada</h2>
                                 <button style={styles.buttonEncerrarRodada} onClick={() => getSocket().emit("encerrar-rodada", { equipeVencedoraId: equipeVencedoraId })}>Encerrar rodada</button>
                             </div> 
                         </div>
@@ -354,7 +354,7 @@ export default function Sala() {
                     <div style={styles.overlay}>
                         <div style={styles.quadroVencedor}>
                             <div>
-                                <h2>Clique para iniciar nova mão</h2>
+                                <h2 style={styles.vencedor}>Clique para iniciar nova mão</h2>
                                 <button style={styles.buttonEncerrarMao} onClick={() => getSocket().emit("encerrar-mao", { equipeVencedoraId: equipeVencedoraId })}>Nova mão</button>
                             </div>
                         </div>
@@ -369,7 +369,7 @@ export default function Sala() {
                 <div style={styles.overlay}>   
                     <div style={styles.quadroVencedor}>
                         <div>
-                            <h2>Equipe {equipeVencedoraId} venceu</h2>
+                            <h2 style={styles.vencedor}>Equipe {equipeVencedoraId} venceu</h2>
                             <button style={styles.botaoVoltar} onClick={sair}>
                                 Voltar para Salas
                             </button>
@@ -382,7 +382,7 @@ export default function Sala() {
                 <div style={styles.overlay}>  
                     <div style={styles.quadroVencedor}>
                         <div>
-                            <h2>Um jogador desconectou no meio da partida</h2>
+                            <h2 style={styles.vencedor}>Um jogador desconectou no meio da partida</h2>
                             <button style={styles.botaoVoltar} onClick={sair}>
                                 Voltar para Salas
                             </button>
@@ -395,7 +395,7 @@ export default function Sala() {
                 <div style={styles.overlay}> 
                     <div style={styles.quadroVencedor}>
                         <div>
-                            <h2>{nomeTrucador} da equipe {equipeTrucadoraId} pediu truco</h2>
+                            <h2 style={styles.vencedor}>{nomeTrucador} da equipe {equipeTrucadoraId} pediu truco</h2>
                             <button style={styles.botaoVoltar} onClick={() => getSocket().emit("aceitar-truco") }>
                                 Aceitar
                             </button>
@@ -411,7 +411,7 @@ export default function Sala() {
                 <div style={styles.overlay}> 
                     <div style={styles.quadroVencedor}>
                         <div>
-                            <h2>Aguardando a outra equipe aceitar ou correr do truco...</h2>
+                            <h2 style={styles.vencedor}>Aguardando a outra equipe aceitar ou correr do truco...</h2>
                         </div>
                     </div> 
                 </div>
@@ -423,6 +423,11 @@ export default function Sala() {
 }
 
 const styles = {
+
+    vencedor: {
+        color: 'black',
+
+    },
     jogoContainer: {
         display: 'flex',
         height: '100vh',
