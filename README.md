@@ -1,6 +1,6 @@
 # Jogo de Truco
 
-O Jogo de Truco é uma plataforma online que permite aos usuários criarem contas, entrarem em salas de jogo e participarem de partidas de truco. O jogo utiliza WebSocket para comunicação em tempo real, JWT para autenticação e a API Deck of Cards para o gerenciamento do baralho. O jogo segue as regras do Truco Paulista e é desenvolvido com Next.js e React no frontend, e Node.js e Express no backend.
+O Jogo de Truco é uma plataforma que permite aos usuários criarem contas, entrarem em salas de jogo e participarem de partidas de truco. O jogo utiliza WebSocket para comunicação em tempo real, JWT para autenticação e a API Deck of Cards para o gerenciamento do baralho. O jogo segue as regras do Truco Paulista e é desenvolvido com Next.js e React no frontend, e Node.js e Express no backend.
 
 ## Funcionalidades
 
